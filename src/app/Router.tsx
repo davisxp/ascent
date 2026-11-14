@@ -1,15 +1,6 @@
-import { createContext, useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { routeRegistry } from '../contracts/registries'
-
-type RouterContextValue = {
-  currentPath: string
-  navigate: (path: string) => void
-}
-
-const RouterContext = createContext<RouterContextValue>({
-  currentPath: '/',
-  navigate: () => {},
-})
+import { RouterContext } from './RouterContext'
 
 export const Router = () => {
   const [currentPath, setCurrentPath] = useState(window.location.pathname || '/')
