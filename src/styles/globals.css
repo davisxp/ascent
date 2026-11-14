@@ -1,0 +1,115 @@
+@import "tailwindcss";
+@import "@fontsource/fraunces";
+@import "@fontsource/atkinson-hyperlegible";
+@import "@fontsource/ibm-plex-mono";
+
+@theme {
+  /* Design tokens — training journal palette */
+  --color-paper: #FBF8F3;
+  --color-ink: #20241F;
+  --color-ink-soft: #4A4C43;
+  --color-border: #D8D3C8;
+  --color-pine: #2F6B4F;
+  --color-pine-soft: #6E9B7E;
+  --color-clay: #C65A3A;
+  --color-marigold: #E9A13B;
+  --color-slate-blue: #5B6782;
+  --color-plum: #8A5A8A;
+  --color-teal: #3E7C7C;
+
+  /* Semantic */
+  --color-success: #2F6B4F;
+  --color-warn: #E9A13B;
+  --color-danger: #C65A3A;
+  --color-info: #3E7C7C;
+
+  /* Typography */
+  --font-display: "Fraunces", serif;
+  --font-body: "Atkinson Hyperlegible", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  --radius-card: 14px;
+  --radius-sm: 8px;
+
+  /* Shadows */
+  --shadow-soft: 0 2px 8px -2px rgba(32, 36, 31, 0.08);
+  --shadow-card: 0 4px 16px -4px rgba(32, 36, 31, 0.10);
+}
+
+@utility paper-bg {
+  background-color: var(--color-paper);
+}
+
+@utility ink-border {
+  border: 1px solid var(--color-border);
+}
+
+@utility focus-ring {
+  outline: 2px solid var(--color-pine);
+  outline-offset: 2px;
+}
+
+html {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+}
+
+/* Custom scrollbars in palette */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-paper);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 8px;
+  border: 2px solid var(--color-paper);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-soft);
+}
+
+/* Honors prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
