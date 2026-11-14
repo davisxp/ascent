@@ -1,5 +1,10 @@
+import { NavShell } from './shell/NavShell'
 import { Router } from './Router'
 
 export const App = () => {
-  return <Router />
+  return (
+    <NavShell>
+      <Router />
+    </NavShell>
+  )
 }
