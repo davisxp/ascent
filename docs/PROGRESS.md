@@ -64,6 +64,24 @@ Updated after every wave by the orchestrator from subagent reports.
 ## GATE B
 - Not run
 
+## W4 (insights, platform, qa)
+- T4.1 insights (in progress): Today, Progress, History + badge cabinet implemented end-to-end.
+  - Today: real dashboard — level/XP ring, streak, kcal/water today (food log), latest
+    weight, today's planned session read from the persisted day plan (scans the last 7
+    day-keys for the generated week), recent workouts; "Start session" routes to /train
+    via the router instead of importing across features.
+  - Progress: level/rank/XP + streak + totals summary, 12-week SVG training heatmap
+    (Monday-start, future cells hidden), volume-by-pattern bars from completed sets,
+    PR timeline from recorded `workout.prs`, badge cabinet (all 24 badges with earned/
+    unearned states + category colors from `GamificationRepositoryImpl.getAwards()`).
+  - History: month calendar (Monday-start grid, done-days highlighted) with prev/next
+    month, month session list with expandable detail, inline set editing (reps/hold/
+    level/RPE saved through the workout repository), delete with undo (XP subtracted on
+    delete via `addXP(-xp)`, restored on undo).
+  - Pure modules + tests: `features/insights/charts.ts` (heatmapGrid, volumeByPattern,
+    prTimeline, bestEffortCurve) and `features/history/calendar.ts` (monthGrid,
+    monthTitle, shiftMonth); 12 new unit tests (86 total).
+
 ## W5 critic + fixes
 - Not started
 
