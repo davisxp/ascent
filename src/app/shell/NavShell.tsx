@@ -4,13 +4,24 @@
  * Routes/nav items registered via registries.
  */
 
-import { type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useRouter } from '../useRouter'
 import { navRegistry } from '../../contracts/registries'
 import { Button } from '../../ui/primitives'
 
 export const NavShell = ({ children }: { children: ReactNode }) => {
   const { currentPath, navigate } = useRouter()
+  const [online, setOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true)
+  useEffect(() => {
+    const on = () => setOnline(true)
+    const off = () => setOnline(false)
+    window.addEventListener('online', on)
+    window.addEventListener('offline', off)
+    return () => {
+      window.removeEventListener('online', on)
+      window.removeEventListener('offline', off)
+    }
+  }, [])
   const mobileItems = navRegistry.getMobile()
   const desktopItems = navRegistry.getDesktop()
 
@@ -24,6 +35,9 @@ export const NavShell = ({ children }: { children: ReactNode }) => {
           <p className="text-[11px] text-ink/40 uppercase tracking-widest mt-1">
             training journal
           </p>
+          {!online && (
+            <p className="text-[11px] text-clay mt-1">offline</p>
+          )}
         </div>
         <nav className="mt-6 space-y-1 px-4">
           {desktopItems.map((item) => {
