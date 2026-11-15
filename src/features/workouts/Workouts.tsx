@@ -3,12 +3,12 @@ import data from '../../content/compendium.json'
 export function Workouts() {
   const c = data as any
   return (
-    <div style={{ padding: 24, display: 'grid', gap: 16 }}>
-      <h1>Workouts</h1>
+    <div className="p-6 pb-24 md:pb-6 space-y-4 text-ink">
+      <h1 className="font-display text-2xl font-bold">Workouts</h1>
       {(c.workouts?.days ?? []).map((d: any) => (
-        <div key={d.name} style={{ marginBottom: 12 }}>
-          <strong>{d.name}</strong>{d.rest ? ' (rest)' : ''}
-          <ul>{(d.exercises ?? []).map((e: any, i: number) => <li key={i}>{e.n} — {e.w}kg × {e.r}</li>)}</ul>
+        <div key={d.name} className="border border-ink/10 rounded-[14px] bg-white p-4 space-y-2">
+          <p className="font-bold">{d.name}{d.rest ? ' (rest)' : ''}</p>
+          <ul className="text-sm space-y-1">{(d.exercises ?? []).map((e: any, i: number) => <li key={i}>{e.n} — {e.w}kg × {e.r}</li>)}</ul>
         </div>
       ))}
     </div>

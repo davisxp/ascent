@@ -4,9 +4,11 @@
  */
 
 import Dexie, { type Table } from 'dexie'
+import type { FinancePlan } from '../domain/finance'
+import type { InvestmentPlan } from '../domain/investment'
 
 export const DB_NAME = 'ascent'
-export const DB_VERSION = 1
+export const DB_VERSION = 2
 
 export interface AscentDB extends Dexie {
   exercises: Table<ExerciseRow, string>
@@ -23,6 +25,8 @@ export interface AscentDB extends Dexie {
   badgeAwards: Table<BadgeAwardRow, string>
   gamification: Table<GamificationRow, string>
   tasks: Table<TaskRow, string>
+  financePlan: Table<FinancePlanRow, string>
+  investmentPlan: Table<InvestmentPlanRow, string>
 }
 
 export interface ExerciseRow {
@@ -218,6 +222,16 @@ export interface FinanceRow {
   notes: string | null
 }
 
+export interface FinancePlanRow {
+  id: string
+  plan: FinancePlan
+}
+
+export interface InvestmentPlanRow {
+  id: string
+  plan: InvestmentPlan
+}
+
 export interface TaskRow {
   id: string
   title: string
@@ -257,10 +271,14 @@ export class AscentDatabase extends Dexie implements AscentDB {
   grooming!: Table<GroomingRow, string>
   network!: Table<NetworkRow, string>
   career!: Table<CareerRow, string>
- 
+  medical!: Table<MedicalRow, string>
+  estate!: Table<EstateRow, string>
+  financePlan!: Table<FinancePlanRow, string>
+  investmentPlan!: Table<InvestmentPlanRow, string>
+
   constructor() {
     super(DB_NAME)
-    this.version(DB_VERSION).stores({
+    this.version(1).stores({
       exercises: 'id',
       workouts: 'id, date',
       dayPlans: 'id, weekStart',
@@ -281,7 +299,14 @@ export class AscentDatabase extends Dexie implements AscentDB {
        grooming: 'id, period',
        network: 'id',
        career: 'id, status',
+       medical: 'id',
+       estate: 'id',
      })
+    // v2: singleton plan documents for the Finances and Investments tabs.
+    this.version(DB_VERSION).stores({
+      financePlan: 'id',
+      investmentPlan: 'id',
+    })
   }
 }
 

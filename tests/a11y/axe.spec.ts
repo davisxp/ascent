@@ -1,7 +1,19 @@
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 
-const routes = ['/', '/train', '/skills', '/library', '/body', '/fuel', '/progress', '/history', '/settings']
+const routes = [
+  '/',
+  '/train',
+  '/skills',
+  '/library',
+  '/body',
+  '/fuel',
+  '/progress',
+  '/history',
+  '/settings',
+  '/finances',
+  '/investments',
+]
 
 for (const route of routes) {
   test(`a11y: ${route} has no critical violations`, async ({ page }) => {

@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from 'react'
 import { GroomingRepositoryImpl } from '../../data/repositories'
+import { Button, Input } from '../../ui/primitives'
 import data from '../../content/compendium.json'
 
 const repo = new GroomingRepositoryImpl()
@@ -16,7 +17,7 @@ export function Grooming() {
   const remove = async (id: string) => { await repo.delete(id); load() }
 
   return (
-    <div className="p-6 space-y-4 text-ink">
+    <div className="p-6 pb-24 md:pb-6 space-y-4 text-ink">
       <h1 className="font-display text-2xl">Grooming</h1>
       <GroomingRoutines routines={routines} onAdd={add} onRemove={remove} />
       <p>Skin: {c.grooming?.skin?.Classification} · {c.grooming?.skin?.['Fitzpatrick Type']}</p>
@@ -30,15 +31,15 @@ function GroomingRoutines({ routines, onAdd, onRemove }: { routines: any[]; onAd
   return (
     <div className="bg-white border border-ink/10 rounded-xl p-4 space-y-2">
       <div className="flex gap-2">
-        <input className="border rounded px-2 py-1" placeholder="Routine" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <Input placeholder="Routine" value={title} onChange={(e) => setTitle(e.target.value)} />
         <select className="border rounded px-2 py-1" value={period} onChange={(e) => setPeriod(e.target.value as any)}>
           <option value="am">AM</option>
           <option value="pm">PM</option>
         </select>
-        <button className="px-3 py-1 bg-pine text-white rounded" onClick={() => { onAdd(title, period); setTitle('') }}>Add</button>
+        <Button onClick={() => { onAdd(title, period); setTitle('') }}>Add</Button>
       </div>
       <ul className="text-sm space-y-1">
-        {routines.map((rt: any) => <li key={rt.id} className="flex justify-between"><span>{rt.title} — {rt.period}</span><button className="text-clay" onClick={() => onRemove(rt.id)}>Delete</button></li>)}
+        {routines.map((rt: any) => <li key={rt.id} className="flex justify-between"><span>{rt.title} — {rt.period}</span><Button variant="ghost" className="text-clay" onClick={() => onRemove(rt.id)}>Delete</Button></li>)}
       </ul>
     </div>
   )

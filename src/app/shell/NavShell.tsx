@@ -19,15 +19,15 @@ export const NavShell = ({ children }: { children: ReactNode }) => {
   const isActive = (href: string) => currentPath === href
 
   return (
-    <div className="flex h-screen flex-col paper-bg overflow-hidden">
-      <aside className="hidden md:flex w-64 flex-col border-r border-ink/10 bg-white/80 z-20">
+    <div className="flex h-screen paper-bg overflow-hidden">
+      <aside className="hidden md:flex w-64 flex-col border-r border-ink/10 bg-white z-20">
         <div className="p-4">
           <h1 className="font-display text-xl font-bold tracking-tight">ASCENT</h1>
-          <p className="text-[11px] text-ink/40 uppercase tracking-widest mt-1">
+          <p className="text-[11px] text-ink/70 uppercase tracking-widest mt-1">
             training journal
           </p>
           {!online && (
-            <p className="text-[11px] text-clay mt-1">offline</p>
+            <p className="text-[11px] text-clay-deep mt-1">offline</p>
           )}
         </div>
         <nav className="mt-6 space-y-1 px-4">
@@ -49,7 +49,7 @@ export const NavShell = ({ children }: { children: ReactNode }) => {
 
       <div className="flex-1 relative overflow-y-auto pb-20 md:pb-0">{children}</div>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-ink/10 bg-white/90 backdrop-blur-md z-40">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-ink/10 bg-white z-40">
         <div className="flex justify-around px-2 py-2">
           {mobileItems.map((item) => {
             const active = isActive(item.href)
@@ -57,7 +57,7 @@ export const NavShell = ({ children }: { children: ReactNode }) => {
               <button
                 key={item.id}
                 className={`flex flex-col items-center gap-1 text-[11px] px-2 py-1 rounded-[10px] ${
-                  active ? 'text-pine' : 'text-ink/50'
+                  active ? 'text-pine' : 'text-ink/70'
                 }`}
                 onClick={() => navigate(item.href)}
               >

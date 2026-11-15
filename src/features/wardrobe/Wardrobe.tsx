@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from 'react'
 import { WardrobeRepositoryImpl } from '../../data/repositories'
+import { Button, Input } from '../../ui/primitives'
 import data from '../../content/compendium.json'
 
 const repo = new WardrobeRepositoryImpl()
@@ -21,12 +22,12 @@ export function Wardrobe() {
   const remove = async (id: string) => { await repo.delete(id); load() }
 
   return (
-    <div className="p-6 space-y-6 text-ink">
+    <div className="p-6 pb-24 md:pb-6 space-y-6 text-ink">
       <h1 className="font-display text-2xl">Wardrobe</h1>
       <p>{w.totals?.owned ?? 0} owned · {w.totals?.restoration ?? 0} restoration · {w.totals?.missing ?? 0} missing</p>
       <WardrobeItems items={items} onAdd={add} onRemove={remove} />
       {(w.categories ?? []).map((cat: any, i: number) => (
-        <details key={i} style={{ marginBottom: 8 }}>
+        <details key={i} className="mb-2">
           <summary>{cat.name} ({cat.items?.length ?? 0})</summary>
           <ul>{(cat.items ?? []).map((it: any, j: number) => <li key={j}>{it.n} — {it.s}</li>)}</ul>
         </details>
@@ -42,15 +43,15 @@ function WardrobeItems({ items, onAdd, onRemove }: { items: any[]; onAdd: (n: st
   return (
     <div className="bg-white border border-ink/10 rounded-xl p-4 space-y-2">
       <div className="flex gap-2">
-        <input className="border rounded px-2 py-1" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-        <input className="border rounded px-2 py-1" placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} />
-        <button className="px-3 py-1 bg-pine text-white rounded" onClick={() => { onAdd(name, category); setName(''); setCategory('') }}>Add</button>
+        <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+        <Input placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} />
+        <Button onClick={() => { onAdd(name, category); setName(''); setCategory('') }}>Add</Button>
       </div>
       <ul className="text-sm space-y-1">
         {items.map((it: any) => (
           <li key={it.id} className="flex justify-between">
             <span>{it.name} — {it.category} ({it.status})</span>
-            <button className="text-clay" onClick={() => onRemove(it.id)}>Delete</button>
+            <Button variant="ghost" className="text-clay" onClick={() => onRemove(it.id)}>Delete</Button>
           </li>
         ))}
       </ul>

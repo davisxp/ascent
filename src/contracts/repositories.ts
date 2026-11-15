@@ -21,10 +21,8 @@ import type { Badge, BadgeAward, LevelInfo, Streak } from '../domain/gamificatio
 import type { UserSettings } from '../domain/preferences'
 import type { Task } from '../domain/task'
 import type { TaskId } from '../domain/ids'
-import type { FinanceEntry } from '../domain/finance'
-import type { FinanceId } from '../domain/ids'
-import type { Investment } from '../domain/investment'
-import type { InvestmentId } from '../domain/ids'
+import type { FinancePlan } from '../domain/finance'
+import type { InvestmentPlan } from '../domain/investment'
 import type { WardrobeItem } from '../domain/wardrobe'
 import type { WardrobeId } from '../domain/ids'
 import type { GroomingRoutine } from '../domain/grooming'
@@ -119,16 +117,14 @@ export interface TaskRepository {
   delete(id: TaskId): Promise<void>
 }
 
-export interface FinanceRepository {
-  getAll(): Promise<FinanceEntry[]>
-  save(entry: FinanceEntry): Promise<void>
-  delete(id: FinanceId): Promise<void>
+export interface FinancePlanRepository {
+  get(): Promise<FinancePlan | null>
+  save(plan: FinancePlan): Promise<void>
 }
 
-export interface InvestmentRepository {
-  getAll(): Promise<Investment[]>
-  save(entry: Investment): Promise<void>
-  delete(id: InvestmentId): Promise<void>
+export interface InvestmentPlanRepository {
+  get(): Promise<InvestmentPlan | null>
+  save(plan: InvestmentPlan): Promise<void>
 }
 
 export interface WardrobeRepository {

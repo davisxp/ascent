@@ -622,38 +622,32 @@ export class TaskRepositoryImpl implements TaskRepository {
 }
 
 // ---------- finance ----------
-export class FinanceRepositoryImpl implements FinanceRepository {
-  async getAll(): Promise<FinanceEntry[]> {
-    const rows = await db.finances.toArray()
-    return rows.map((r) => ({ id: r.id, name: r.name, amount: r.amount, kind: r.kind as FinanceEntry["kind"], date: r.date, notes: r.notes ?? undefined }))
+export class FinancePlanRepositoryImpl implements FinancePlanRepository {
+  async get(): Promise<FinancePlan | null> {
+    const row = await db.financePlan.get('plan')
+    return row ? row.plan : null
   }
-  async save(entry: FinanceEntry): Promise<void> {
-    await db.finances.put({ id: entry.id, name: entry.name, amount: entry.amount, kind: entry.kind, date: entry.date, notes: entry.notes ?? null })
-  }
-  async delete(id: string): Promise<void> {
-    await db.finances.delete(id)
+  async save(plan: FinancePlan): Promise<void> {
+    await db.financePlan.put({ id: 'plan', plan })
   }
 }
 
-import type { FinanceRepository } from '../../contracts/repositories'
-import type { FinanceEntry } from '../../domain/finance'
+import type { FinancePlanRepository } from '../../contracts/repositories'
+import type { FinancePlan } from '../../domain/finance'
 
 // ---------- investment ----------
-export class InvestmentRepositoryImpl implements InvestmentRepository {
-  async getAll(): Promise<Investment[]> {
-    const rows = await db.investments.toArray()
-    return rows.map((r) => ({ id: r.id, name: r.name, value: r.value, kind: r.kind, updatedAt: r.updatedAt }))
+export class InvestmentPlanRepositoryImpl implements InvestmentPlanRepository {
+  async get(): Promise<InvestmentPlan | null> {
+    const row = await db.investmentPlan.get('plan')
+    return row ? row.plan : null
   }
-  async save(entry: Investment): Promise<void> {
-    await db.investments.put({ id: entry.id, name: entry.name, value: entry.value, kind: entry.kind, updatedAt: entry.updatedAt })
-  }
-  async delete(id: string): Promise<void> {
-    await db.investments.delete(id)
+  async save(plan: InvestmentPlan): Promise<void> {
+    await db.investmentPlan.put({ id: 'plan', plan })
   }
 }
 
-import type { InvestmentRepository } from '../../contracts/repositories'
-import type { Investment } from '../../domain/investment'
+import type { InvestmentPlanRepository } from '../../contracts/repositories'
+import type { InvestmentPlan } from '../../domain/investment'
 
 // ---------- wardrobe ----------
 export class WardrobeRepositoryImpl implements WardrobeRepository {
@@ -721,3 +715,36 @@ import type { NetworkRepository } from '../../contracts/repositories'
 import type { NetworkContact } from '../../domain/network'
 import type { CareerRepository } from '../../contracts/repositories'
 import type { CareerGoal } from '../../domain/career'
+
+// ---------- medical ----------
+export class MedicalRepositoryImpl implements MedicalRepository {
+  async getAll(): Promise<MedicalNote[]> {
+    const rows = await db.medical.toArray()
+    return rows.map((r) => ({ id: r.id, title: r.title, body: r.body, date: r.date }))
+  }
+  async save(note: MedicalNote): Promise<void> {
+    await db.medical.put({ id: note.id, title: note.title, body: note.body, date: note.date })
+  }
+  async delete(id: string): Promise<void> {
+    await db.medical.delete(id)
+  }
+}
+
+// ---------- estate ----------
+export class EstateRepositoryImpl implements EstateRepository {
+  async getAll(): Promise<EstateItem[]> {
+    const rows = await db.estate.toArray()
+    return rows.map((r) => ({ id: r.id, name: r.name, value: r.value, notes: r.notes ?? undefined }))
+  }
+  async save(item: EstateItem): Promise<void> {
+    await db.estate.put({ id: item.id, name: item.name, value: item.value, notes: item.notes ?? null })
+  }
+  async delete(id: string): Promise<void> {
+    await db.estate.delete(id)
+  }
+}
+
+import type { MedicalRepository } from '../../contracts/repositories'
+import type { MedicalNote } from '../../domain/medical'
+import type { EstateRepository } from '../../contracts/repositories'
+import type { EstateItem } from '../../domain/estate'
