@@ -57,3 +57,11 @@ Dated decision log with rationale. Updated by the orchestrator; subagents log cr
 ## 2026-11-15 — Body photos come from the file picker only
 **Decision:** Photo capture uses `<input type="file">` and canvas downscaling to a 1024px JPEG plus a 240px thumbnail stored as data URLs; no camera APIs (`getUserMedia`) are used.
 **Rationale:** Mission forbids camera features in v1; the file picker covers gallery/mostly-camera workflows on desktop and mobile while staying offline-first.
+
+## 2026-11-15 — Deleting a workout subtracts its XP; undo restores it
+**Decision:** History's delete removes the workout row and calls `addXP(-workout.xpAwarded)`; the undo action re-saves the row and re-adds the XP. The streak is not recomputed on delete, and re-running PR detection against edited sets is out of scope for v1.
+**Rationale:** XP is the only gamification value persisted in the gamification row, so compensating it keeps the total honest without a full recalculation engine. Streak decay after a delete is an acceptable, documented limitation; PRs are already recorded on surviving workout rows and best-effort checks scan history live.
+
+## 2026-11-15 — Today links to Train instead of importing the train slice
+**Decision:** The Today screen shows today's planned session read directly from the day-plan repository and routes to `/train` with the router to start a session; it does not import `features/train`.
+**Rationale:** AGENTS.md forbids feature-to-feature imports; the router and repositories are the sanctioned cross-feature seams. Today scans the last 7 day-keys for the persisted week because `generateWeek` stamps rows with the generation date, not the Monday of that week.
