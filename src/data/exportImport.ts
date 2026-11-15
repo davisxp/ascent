@@ -93,6 +93,12 @@ function emptyProfile(): BodyProfile {
   } as unknown as BodyProfile
 }
 
+export async function resetAllData(): Promise<void> {
+  await db.transaction('rw', db.tables, async () => {
+    await Promise.all(db.tables.map((t) => t.clear()))
+  })
+}
+
 export async function importBackup(json: string): Promise<{ ok: boolean; error?: string }> {
   let env: Env
   try {

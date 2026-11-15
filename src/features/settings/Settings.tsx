@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { Card } from '../../ui/primitives'
-import { exportBackup, importBackup } from '../../data/exportImport'
+import { exportBackup, importBackup, resetAllData } from '../../data/exportImport'
 
 export const Settings = () => {
   const fileRef = useRef<HTMLInputElement>(null)
@@ -75,6 +75,26 @@ export const Settings = () => {
             }}
           />
         </div>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={async () => {
+            if (!confirm('Reset ALL data? This cannot be undone.')) return
+            setBusy(true)
+            setStatus('')
+            try {
+              await resetAllData()
+              setStatus('All data reset.')
+            } catch (e) {
+              setStatus(e instanceof Error ? e.message : 'Reset failed.')
+            } finally {
+              setBusy(false)
+            }
+          }}
+          className="rounded-xl border border-red-500/40 text-red-600 px-4 py-2 text-sm font-medium disabled:opacity-50"
+        >
+          Reset all data
+        </button>
         {status && <p className="text-sm text-ink/70">{status}</p>}
       </Card>
     </div>
