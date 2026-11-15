@@ -3,11 +3,10 @@
  * Uses the single timer service and sound service.
  */
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { timer } from '../../platform/timer'
 import { sound, resumeAudio } from '../../platform/sound'
-import { Ring } from '../../ui/primitives'
-import { Button } from '../../ui/primitives'
+import { Ring, Button } from '../../ui/primitives'
 
 type RestTimerProps = {
   durationSeconds: number
@@ -23,17 +22,25 @@ export const RestTimer = ({
   soundOn = true,
 }: RestTimerProps): JSX.Element => {
   const [remaining, setRemaining] = useState(durationSeconds)
-  const [running, setRunning] = useState(false)
+  const [paused, setPaused] = useState(false)
+  const onCompleteRef = useRef(onComplete)
+  const soundOnRef = useRef(soundOn)
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete
+  }, [onComplete])
+  useEffect(() => {
+    soundOnRef.current = soundOn
+  }, [soundOn])
 
   const tick = useCallback((secs: number) => {
     setRemaining(secs)
   }, [])
 
   const handleComplete = useCallback(() => {
-    setRunning(false)
-    if (soundOn) sound.restFinish()
-    onComplete()
-  }, [soundOn, onComplete])
+    if (soundOnRef.current) sound.restFinish()
+    onCompleteRef.current()
+  }, [])
 
   useEffect(() => {
     resumeAudio()
@@ -43,29 +50,28 @@ export const RestTimer = ({
 
   const handleSkip = () => {
     timer.stop()
-    setRunning(false)
+    setPaused(true)
     setRemaining(0)
     onSkip?.()
   }
 
   const handleAdd30 = () => {
-    timer.stop()
+    setPaused(false)
     timer.start(remaining + 30, tick, handleComplete)
     setRemaining(remaining + 30)
-    setRunning(true)
   }
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 paper-bg min-h-[300px] p-6">
+    <div className="flex flex-col items-center justify-center gap-4 min-h-[300px] p-6">
       <Ring
         value={durationSeconds - remaining}
         max={durationSeconds}
         size={110}
         color="pine"
-        label={`${remaining}s rest`}
+        label={`${remaining} seconds of rest remaining`}
         className="relative"
       />
-      <div className="relative -top-16">
+      <div className="relative -top-16" aria-hidden="true">
         <span className="font-mono text-5xl font-bold text-ink">{remaining}</span>
         <span className="absolute -top-4 right-0 text-xs text-ink/40 font-mono">SECONDS</span>
       </div>
@@ -77,8 +83,8 @@ export const RestTimer = ({
           Skip
         </Button>
       </div>
-      <p className="text-sm text-ink/50">
-        {running ? 'Recover — next set coming up' : 'Rest complete'}
+      <p className="text-sm text-ink/50" aria-live="polite">
+        {paused ? 'Rest skipped' : 'Recover — next set coming up'}
       </p>
     </div>
   )

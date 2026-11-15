@@ -1,4 +1,4 @@
-import { routeRegistry, navRegistry } from '../contracts/registries'
+import { routeRegistry, navRegistry, sliceRegistry } from '../contracts/registries'
 import { Today } from '../features/today/Today'
 import { Train } from '../features/train/WeekView'
 import { Skills } from '../features/skills/Skills'
@@ -8,6 +8,7 @@ import { Fuel } from '../features/fuel/Fuel'
 import { Progress } from '../features/insights/Progress'
 import { History } from '../features/history/History'
 import { Settings } from '../features/settings/Settings'
+import { useTrainStore } from '../features/train/store'
 
 const routes = [
   { path: '/', element: Today, label: 'Today', icon: 'home' },
@@ -24,6 +25,9 @@ const routes = [
 for (const r of routes) {
   routeRegistry.register(r)
 }
+
+// Train slice — registered through the central slice registry.
+sliceRegistry.register({ name: 'train', create: () => useTrainStore })
 
 // Desktop sidebar: all routes
 for (const r of routes) {

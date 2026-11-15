@@ -2,6 +2,7 @@
  * Audio service — single WebAudio instance.
  * Rest beeps + PR chime. Default on; muted via header toggle.
  * All oscillators/gain nodes cleaned up after play.
+ * Every call is guarded: missing/suspended WebAudio never throws.
  */
 
 let audioCtx: AudioContext | null = null
@@ -34,29 +35,45 @@ const playTone = (freq: number, durationMs: number, type: OscillatorType = 'sine
   osc.stop(now + durationMs / 1000)
 }
 
+/** Run an audio effect, swallowing failures when WebAudio is unavailable. */
+const guard = (fn: () => void): void => {
+  try {
+    fn()
+  } catch {
+    // audio unavailable — silent fallback
+  }
+}
+
 export const sound = {
-  beep: () => playTone(880, 60),
-  restTick: () => playTone(660, 30),
-  restFinish: () => playTone(1046, 120),
-  prChime: () => {
-    playTone(659, 150)
-    setTimeout(() => playTone(784, 150), 120)
-    setTimeout(() => playTone(1046, 300), 240)
-  },
-  levelUp: () => {
-    playTone(523, 120)
-    setTimeout(() => playTone(659, 120), 100)
-    setTimeout(() => playTone(784, 120), 200)
-    setTimeout(() => playTone(1046, 400), 300)
-  },
-  unlock: () => {
-    playTone(800, 100)
-    setTimeout(() => playTone(1200, 250), 80)
-  },
-  click: () => playTone(900, 25, 'sine', 0.03),
+  beep: () => guard(() => playTone(880, 60)),
+  restTick: () => guard(() => playTone(660, 30)),
+  restFinish: () => guard(() => playTone(1046, 120)),
+  prChime: () =>
+    guard(() => {
+      playTone(659, 150)
+      setTimeout(() => playTone(784, 150), 120)
+      setTimeout(() => playTone(1046, 300), 240)
+    }),
+  levelUp: () =>
+    guard(() => {
+      playTone(523, 120)
+      setTimeout(() => playTone(659, 120), 100)
+      setTimeout(() => playTone(784, 120), 200)
+      setTimeout(() => playTone(1046, 400), 300)
+    }),
+  unlock: () =>
+    guard(() => {
+      playTone(800, 100)
+      setTimeout(() => playTone(1200, 250), 80)
+    }),
+  click: () => guard(() => playTone(900, 25, 'sine', 0.03)),
 }
 
 export const resumeAudio = () => {
-  const ctx = getCtx()
-  if (ctx.state === 'suspended') ctx.resume()
+  try {
+    const ctx = getCtx()
+    if (ctx.state === 'suspended') ctx.resume()
+  } catch {
+    // audio unavailable — silent fallback
+  }
 }

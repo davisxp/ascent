@@ -1,18 +1,20 @@
 /**
  * Train zustand slice — active workout state.
  * Persistence goes through repositories; no Dexie calls here.
- * Registered via sliceRegistry in index.ts.
+ * Registered via sliceRegistry in app/registrations.ts.
  */
 
 import { generateWeek, whyWorkout } from '../../engine/planGenerator'
 import { levelInfo, updateStreak, isPR } from '../../engine/gamification'
+import { swapTarget } from '../../engine/swap'
 import { XP } from '../../domain/gamification'
-import { exercises as allExercises, chainById } from '../../content/index'
+import { exerciseById, chainById } from '../../content/index'
 import {
   WorkoutRepositoryImpl,
   DayPlanRepositoryImpl,
   GamificationRepositoryImpl,
   BodyRepositoryImpl,
+  SettingsRepositoryImpl,
 } from '../../data/repositories'
 import type {
   Workout,
@@ -31,11 +33,12 @@ const workoutRepo = new WorkoutRepositoryImpl()
 const dayPlanRepo = new DayPlanRepositoryImpl()
 const gamificationRepo = new GamificationRepositoryImpl()
 const bodyRepo = new BodyRepositoryImpl()
+const settingsRepo = new SettingsRepositoryImpl()
 
 const DEFAULT_REPS_RPE = branded<RPE>(5)
 
 function findExercise(exerciseId: string) {
-  return allExercises.find((e) => e.id === exerciseId)
+  return exerciseById.get(exerciseId)
 }
 
 function bestEffortForExercise(
@@ -68,16 +71,19 @@ function bestEffortForExercise(
   return best
 }
 
-interface TrainState {
+export interface TrainState {
   weekPlan: WeekPlan | null
   weekStart: DateISO | null
+  weekIndex: number
   activeWorkout: Workout | null
   activeDayIndex: number | null
+  startedAt: number | null // epoch ms when the session started
   placements: Record<string, number>
   daysPerWeek: 2 | 3 | 4 | 5 | 6
   sessionLength: 20 | 30 | 45 | 60
   goal: 'strength' | 'skills' | 'flexibility' | 'balanced'
   barEnabled: boolean
+  defaultRestSeconds: number
   totalXP: number
   level: LevelInfo
   streak: Streak
@@ -89,6 +95,7 @@ interface TrainState {
   updateSet: (exerciseId: string, setIndex: number, updates: Partial<SetLog>) => void
   completeWorkout: () => Promise<Workout>
   swapExercise: (exerciseId: string, direction: 'easier' | 'harder') => Promise<void>
+  quitWorkout: () => void
 }
 
 type SetState = Partial<TrainState> | ((prev: TrainState) => Partial<TrainState>)
@@ -97,13 +104,16 @@ export const createTrainSlice = (set: (partial: SetState) => void, get: () => Tr
   return {
     weekPlan: null,
     weekStart: null,
+    weekIndex: 0,
     activeWorkout: null,
     activeDayIndex: null,
+    startedAt: null,
     placements: {},
     daysPerWeek: 3,
     sessionLength: 45,
     goal: 'balanced',
     barEnabled: false,
+    defaultRestSeconds: 60,
     totalXP: 0,
     level: { level: 1, rank: 'Recruit', xp: 0, xpToNext: 1000 },
     streak: { current: 0, best: 0 },
@@ -112,6 +122,7 @@ export const createTrainSlice = (set: (partial: SetState) => void, get: () => Tr
     init: async () => {
       set({ isLoading: true })
       try {
+        const settings = await settingsRepo.get()
         const profile = await bodyRepo.getProfile()
         if (profile) {
           set({
@@ -124,7 +135,7 @@ export const createTrainSlice = (set: (partial: SetState) => void, get: () => Tr
         const totalXP = await gamificationRepo.getTotalXP()
         const level = levelInfo(totalXP)
         const streak = await gamificationRepo.getStreak()
-        set({ totalXP, level, streak })
+        set({ totalXP, level, streak, defaultRestSeconds: settings.defaultRestSeconds })
         await get().generateWeek(0)
       } finally {
         set({ isLoading: false })
@@ -163,7 +174,7 @@ export const createTrainSlice = (set: (partial: SetState) => void, get: () => Tr
       }))
 
       await dayPlanRepo.saveWeek(startDate, daysWithNames)
-      set({ weekPlan: { index: week.index, days: daysWithNames } })
+      set({ weekPlan: { index: week.index, days: daysWithNames }, weekIndex })
     },
 
     startWorkout: async (dayIndex: number) => {
@@ -172,7 +183,7 @@ export const createTrainSlice = (set: (partial: SetState) => void, get: () => Tr
       const day = week.days[dayIndex]
       if (!day) return
 
-      const exercises: ExerciseLog[] = day.exercises.map((ex: { exerciseId: ExerciseId; name: string; metric: 'reps' | 'hold-seconds' | 'level'; targetSets: number; targetReps?: [number, number]; targetHoldSeconds?: number; restSeconds: number; rpeCap: RPE }) => {
+      const exercises: ExerciseLog[] = day.exercises.map((ex) => {
         const sets: SetLog[] = []
         for (let i = 0; i < ex.targetSets; i++) {
           sets.push({
@@ -197,16 +208,16 @@ export const createTrainSlice = (set: (partial: SetState) => void, get: () => Tr
         dayIndex,
         weekIndex: week.index,
         mesocycleIndex: 0,
-        isDeload: false,
+        isDeload: week.index === 3,
         split: day.split,
         exercises,
         durationSeconds: 0,
         xpAwarded: 0,
         prs: [],
-        why: whyWorkout(day, { goal: get().goal, deload: false }),
+        why: whyWorkout(day, { goal: get().goal, deload: week.index === 3 }),
       }
 
-      set({ activeWorkout: workout, activeDayIndex: dayIndex })
+      set({ activeWorkout: workout, activeDayIndex: dayIndex, startedAt: Date.now() })
     },
 
     updateSet: (exerciseId: string, setIndex: number, updates: Partial<SetLog>) => {
@@ -227,12 +238,12 @@ export const createTrainSlice = (set: (partial: SetState) => void, get: () => Tr
     completeWorkout: async () => {
       const workout = get().activeWorkout
       if (!workout) throw new Error('No active workout')
+      const startedAt = get().startedAt
 
       const previousWorkouts = await workoutRepo.getAll()
       const prs: ExerciseId[] = []
       let setXP = 0
 
-      const completedExercises: ExerciseLog[] = []
       for (const ex of workout.exercises) {
         const completedSets = ex.sets.filter((s) => s.completed)
         setXP += completedSets.length * XP.set
@@ -241,7 +252,6 @@ export const createTrainSlice = (set: (partial: SetState) => void, get: () => Tr
         const metric = exDef?.metric ?? 'reps'
         const priorBest = bestEffortForExercise(ex.exerciseId, previousWorkouts)
 
-        // exercisePR removed (unused)
         if (completedSets.length > 0) {
           let currentBest: { reps?: number; holdSeconds?: number; level?: number } | null = null
           for (const s of completedSets) {
@@ -255,12 +265,9 @@ export const createTrainSlice = (set: (partial: SetState) => void, get: () => Tr
             }
           }
           if (currentBest && isPR(metric, currentBest, priorBest ?? null)) {
-            // removed
             prs.push(branded<ExerciseId>(ex.exerciseId))
           }
         }
-
-        completedExercises.push({ ...ex, sets: ex.sets })
       }
 
       const workoutXP = setXP + XP.workout + prs.length * XP.pr
@@ -270,12 +277,11 @@ export const createTrainSlice = (set: (partial: SetState) => void, get: () => Tr
 
       const finishedWorkout: Workout = {
         ...workout,
-        exercises: completedExercises,
         completedAt: todayISO(),
-        durationSeconds: 0,
+        durationSeconds:
+          startedAt != null ? Math.max(0, Math.round((Date.now() - startedAt) / 1000)) : 0,
         xpAwarded: workoutXP,
         prs,
-        why: workout.why,
       }
 
       await workoutRepo.save(finishedWorkout)
@@ -286,6 +292,7 @@ export const createTrainSlice = (set: (partial: SetState) => void, get: () => Tr
       set({
         activeWorkout: null,
         activeDayIndex: null,
+        startedAt: null,
         totalXP: newTotalXP,
         level: newLevel,
         streak: newStreak,
@@ -296,33 +303,56 @@ export const createTrainSlice = (set: (partial: SetState) => void, get: () => Tr
 
     swapExercise: async (exerciseId: string, direction: 'easier' | 'harder') => {
       const current = findExercise(exerciseId)
-      if (!current) return
-      const chain = current.chainId ? chainById.get(current.chainId) : undefined
+      if (!current?.chainId) return
+      const chain = chainById.get(current.chainId)
       if (!chain) return
 
-      const currentStepIndex = chain.steps.findIndex((s) => s.exerciseId === exerciseId)
+      // exercise.step is 1-based; chain.steps is a 0-based array.
+      const currentStepIndex =
+        current.step != null
+          ? current.step - 1
+          : chain.steps.findIndex((s) => s.exerciseId === exerciseId)
       if (currentStepIndex === -1) return
 
-      let targetStepIndex: number
-      if (direction === 'easier') {
-        targetStepIndex = Math.max(0, currentStepIndex - 1)
-      } else {
-        targetStepIndex = Math.min(chain.steps.length - 1, currentStepIndex + 1)
-      }
+      const candidate = swapTarget(chain, currentStepIndex, direction, {
+        barEnabled: get().barEnabled,
+        getExercise: findExercise,
+      })
+      if (!candidate) return
 
-      const targetExerciseId = chain.steps[targetStepIndex].exerciseId
-      const target = findExercise(targetExerciseId)
-      if (!target) return
-
-      if (target.pattern !== current.pattern) return
-
-      if (Math.abs(target.difficulty - current.difficulty) > 1) return
-
-      const placements = { ...get().placements }
-      placements[current.chainId ?? ''] = targetStepIndex
+      // 1. Move the chain placement and regenerate + persist the week.
+      const placements = { ...get().placements, [current.chainId]: candidate.stepIndex }
       set({ placements })
+      await get().generateWeek(get().weekIndex)
+
+      // 2. Apply to the in-flight workout so the player shows the new move.
+      const workout = get().activeWorkout
+      if (!workout) return
+      const exIdx = workout.exercises.findIndex((e) => e.exerciseId === exerciseId)
+      if (exIdx === -1) return
+      const old = workout.exercises[exIdx]
+      const sets: SetLog[] = old.sets.map((_, i) => ({
+        id: id(),
+        exerciseId: candidate.exercise.id,
+        rpe: DEFAULT_REPS_RPE,
+        completed: false,
+        order: i,
+      }))
+      const replacement: ExerciseLog = {
+        exerciseId: candidate.exercise.id,
+        name: candidate.exercise.name,
+        metric: candidate.exercise.metric,
+        sets,
+      }
+      const nextExercises = [...workout.exercises]
+      nextExercises[exIdx] = replacement
+      set({ activeWorkout: { ...workout, exercises: nextExercises } })
+    },
+
+    quitWorkout: () => {
+      set({ activeWorkout: null, activeDayIndex: null, startedAt: null })
     },
   }
 }
 
-export type TrainSlice = ReturnType<typeof createTrainSlice>
+export type TrainSlice = TrainState

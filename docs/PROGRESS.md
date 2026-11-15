@@ -21,7 +21,21 @@ Updated after every wave by the orchestrator from subagent reports.
 - Not run
 
 ## W3 (train, skills-library, body-fuel)
-- Not started
+- T3.1 train (in progress): WorkoutPlayer, ExerciseSwap, FinishSummary implemented end-to-end.
+  - Fullscreen player: focus trap + Escape, wake lock, per-exercise form cues, set chips,
+    SetLogger integration, rest overlay (RestTimer), hold overlay (HoldTimer), swap overlay,
+    quit-confirm flow.
+  - ExerciseSwap: engine-driven adjacent-step candidates (pattern + ±1 difficulty + bar filter).
+  - FinishSummary: duration, sets, XP breakdown, PR list with chime, level/rank, streak.
+  - Slice: session timing (startedAt → durationSeconds), quitWorkout, swap applies to the
+    active workout AND regenerates/persists the week via the plan generator; registered in
+    sliceRegistry via `src/features/train/store.ts` (zustand).
+  - Bug fixes: HoldTimer count-up now uses `timer.startCountUp` (interval-restart bug),
+    sound service guarded against missing WebAudio, mobility chains wired into the plan
+    generator (mobility days were previously empty), unified `exerciseById` content lookup,
+    1-based `exercise.step` handled correctly in swap paths.
+  - Tests: 45 unit tests green (swap engine + FinishSummary render added).
+- skills-library, body-fuel: NOT started.
 
 ## GATE B
 - Not run

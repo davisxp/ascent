@@ -6,7 +6,7 @@
 import type { DayPlan, Mesocycle, WeekPlan } from '../domain/workout'
 import type { ExerciseId, RPE, ChainId, DateISO } from '../domain/ids'
 import { branded } from '../domain/ids'
-import { chainById } from '../content/index'
+import { chainById, mobilityChainById } from '../content/index'
 import { deloadVolume } from './progression'
 
 export type PlanInputs = {
@@ -49,12 +49,17 @@ const holdForDifficulty = (difficulty: number): number => {
   return 20
 }
 
-/** Pick one representative exercise from a chain at the given step. */
+/** Pick one representative exercise from a chain at the given step.
+ *  Strength chains live in `chainById`; mobility chains (single step,
+ *  one exercise per chain) live in `mobilityChainById`. */
 function exerciseForChain(chainId: ChainId, stepIndex: number): ExerciseId | null {
   const chain = chainById.get(chainId)
-  if (!chain) return null
-  const step = chain.steps[Math.min(stepIndex, chain.steps.length - 1)]
-  return step ? step.exerciseId : null
+  if (chain) {
+    const step = chain.steps[Math.min(stepIndex, chain.steps.length - 1)]
+    return step ? step.exerciseId : null
+  }
+  const mobility = mobilityChainById.get(chainId)
+  return mobility ? mobility.id : null
 }
 
 /**

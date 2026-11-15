@@ -17,7 +17,7 @@ T2.2 | engine | T1.5 | W2 | Progression, plan generator, nutrition math, XP/PR/s
 T2.3 | design-system | T1.5 | W2 | Tokens, primitives, nav shell, motion, sound; catalog renders; axe clean | pending
 T2.4 | platform | T1.5,T2.2 | W2 | Dexie DB, repositories, migrations core | pending
 GATE A | orchestrator | T2.1-T2.4 | W2 | typecheck + lint + unit tests + audit:content + build green | pending
-T3.1 | train | GATE A | W3 | Program week view + workout player + timers; e2e workout flow passes | pending
+T3.1 | train | GATE A | W3 | Program week view + workout player + timers; e2e workout flow passes | in-progress (player/swap/summary/timers done; e2e workout flow pending)
 T3.2 | skills-library | GATE A | W3 | SVG skill trees + library + detail; e2e unlock + filter flows pass | pending
 T3.3 | body-fuel | GATE A | W3 | Weight/measures/photos + nutrition logging; e2e persistence + photo compare pass | pending
 T4.1 | insights | GATE A | W4 | Today, Progress, History, badge cabinet; charts render real data; undo works | pending

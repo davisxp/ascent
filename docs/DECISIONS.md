@@ -29,3 +29,15 @@ Dated decision log with rationale. Updated by the orchestrator; subagents log cr
 ## 2026-11-14 — PWA rollup manualChunks
 **Decision:** Lazy-load chunks: `charts` (recharts), `motion` (framer-motion), `dexie` (dexie/dexie-react-hooks).
 **Rationale:** Perf budget: initial JS <350KB gz; charts/trees/photos lazy-loaded.
+
+## 2026-11-15 — Chain steps are 1-based
+**Decision:** `Exercise.step` and `ChainStep.step` are 1-based; all array access into `Chain.steps` subtracts 1 (`steps[step - 1]`). Chain placements in `TrainState.placements` are 0-based array indexes consumed directly by the plan generator.
+**Rationale:** Seed data (and chain definitions) number steps 1..n. Treating `step` as an array index produced off-by-one swaps (e.g., Incline Push-Up resolving to Knee Push-Up). Normalizing once, with an invariant test over all seeded chains, prevents recurrence.
+
+## 2026-11-15 — Mobility chains resolve through a separate map
+**Decision:** `exerciseForChain` (plan generator) falls back to `mobilityChainById` when a chain id is absent from `chainById`; content exposes `allExercises`/`exerciseById` covering strength + mobility.
+**Rationale:** Mobility chains live in `src/content/mobility.ts`, so the generator's mobility day previously produced zero exercises and slice/player lookups returned undefined names for mobility moves.
+
+## 2026-11-15 — Active workout is in-memory until completion
+**Decision:** The in-flight workout lives in the zustand train slice only; it is persisted exactly once via `WorkoutRepositoryImpl.save` on completion. Quitting discards it (with an explicit confirm dialog).
+**Rationale:** Avoids partial-workout rows and PR/XP double-counting from half-saved sessions. Known limitation: an app reload mid-session loses progress — acceptable for v1; revisit if e2e shows users expect crash recovery.

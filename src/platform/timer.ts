@@ -31,6 +31,29 @@ export const timer = {
     }, 1000)
   },
 
+  /**
+   * Count-up mode for isometric holds: ticks elapsed seconds and
+   * auto-completes once the target is reached.
+   */
+  startCountUp(seconds: number, tick: TickCallback, complete: CompleteCallback): void {
+    this.stop()
+    duration = seconds
+    onTick = tick
+    onComplete = complete
+    startTime = Date.now()
+    onTick(0)
+    intervalId = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000)
+      if (elapsed >= duration) {
+        onTick?.(duration)
+        this.stop()
+        onComplete?.()
+        return
+      }
+      onTick?.(elapsed)
+    }, 1000)
+  },
+
   stop(): void {
     if (intervalId) {
       clearInterval(intervalId)
