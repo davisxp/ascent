@@ -1,11 +1,23 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Card } from '../../ui/primitives'
+import { SettingsRepositoryImpl } from '../../data/repositories'
 import { exportBackup, importBackup, resetAllData } from '../../data/exportImport'
+import type { UserSettings } from '../../domain/index'
 
 export const Settings = () => {
   const fileRef = useRef<HTMLInputElement>(null)
   const [status, setStatus] = useState<string>('')
   const [busy, setBusy] = useState(false)
+  const [settings, setSettings] = useState<UserSettings | null>(null)
+
+  useEffect(() => {
+    new SettingsRepositoryImpl().get().then(setSettings)
+  }, [])
+
+  const save = async (next: UserSettings) => {
+    setSettings(next)
+    await new SettingsRepositoryImpl().save(next)
+  }
 
   const onExport = async () => {
     setBusy(true)
@@ -45,8 +57,47 @@ export const Settings = () => {
   return (
     <div className="p-6 pb-24 md:pb-6">
       <h1 className="font-display text-3xl font-bold mb-4">Settings</h1>
-      <Card className="space-y-3">
+      <Card className="space-y-4">
         <p className="text-sm text-ink/50">Units, sound, rest defaults, export/import, demo data, reset.</p>
+
+        {settings && (
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="text-sm">
+              <span className="block text-ink/60 mb-1">Sound</span>
+              <select
+                value={settings.sound}
+                onChange={(e) => save({ ...settings, sound: e.target.value as UserSettings['sound'] })}
+                className="w-full rounded-xl border border-ink/20 px-3 py-2"
+              >
+                <option value="on">On</option>
+                <option value="off">Off</option>
+              </select>
+            </label>
+            <label className="text-sm">
+              <span className="block text-ink/60 mb-1">Units</span>
+              <select
+                value={settings.units}
+                onChange={(e) => save({ ...settings, units: e.target.value as UserSettings['units'] })}
+                className="w-full rounded-xl border border-ink/20 px-3 py-2"
+              >
+                <option value="metric">Metric</option>
+                <option value="imperial">Imperial</option>
+              </select>
+            </label>
+            <label className="text-sm">
+              <span className="block text-ink/60 mb-1">Default rest (s)</span>
+              <input
+                type="number"
+                min={15}
+                max={300}
+                value={settings.defaultRestSeconds}
+                onChange={(e) => save({ ...settings, defaultRestSeconds: Number(e.target.value) })}
+                className="w-full rounded-xl border border-ink/20 px-3 py-2"
+              />
+            </label>
+          </div>
+        )}
+
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
@@ -74,27 +125,27 @@ export const Settings = () => {
               if (f) onImportFile(f)
             }}
           />
+          <button
+            type="button"
+            disabled={busy}
+            onClick={async () => {
+              if (!confirm('Reset ALL data? This cannot be undone.')) return
+              setBusy(true)
+              setStatus('')
+              try {
+                await resetAllData()
+                setStatus('All data reset.')
+              } catch (e) {
+                setStatus(e instanceof Error ? e.message : 'Reset failed.')
+              } finally {
+                setBusy(false)
+              }
+            }}
+            className="rounded-xl border border-red-500/40 text-red-600 px-4 py-2 text-sm font-medium disabled:opacity-50"
+          >
+            Reset all data
+          </button>
         </div>
-        <button
-          type="button"
-          disabled={busy}
-          onClick={async () => {
-            if (!confirm('Reset ALL data? This cannot be undone.')) return
-            setBusy(true)
-            setStatus('')
-            try {
-              await resetAllData()
-              setStatus('All data reset.')
-            } catch (e) {
-              setStatus(e instanceof Error ? e.message : 'Reset failed.')
-            } finally {
-              setBusy(false)
-            }
-          }}
-          className="rounded-xl border border-red-500/40 text-red-600 px-4 py-2 text-sm font-medium disabled:opacity-50"
-        >
-          Reset all data
-        </button>
         {status && <p className="text-sm text-ink/70">{status}</p>}
       </Card>
     </div>
