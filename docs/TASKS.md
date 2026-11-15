@@ -19,7 +19,7 @@ T2.4 | platform | T1.5,T2.2 | W2 | Dexie DB, repositories, migrations core | pen
 GATE A | orchestrator | T2.1-T2.4 | W2 | typecheck + lint + unit tests + audit:content + build green | pending
 T3.1 | train | GATE A | W3 | Program week view + workout player + timers; e2e workout flow passes | in-progress (player/swap/summary/timers done; e2e workout flow pending)
 T3.2 | skills-library | GATE A | W3 | SVG skill trees + library + detail; e2e unlock + filter flows pass | in-progress (trees + library + detail done; e2e flows pending)
-T3.3 | body-fuel | GATE A | W3 | Weight/measures/photos + nutrition logging; e2e persistence + photo compare pass | pending
+T3.3 | body-fuel | GATE A | W3 | Weight/measures/photos + nutrition logging; e2e persistence + photo compare pass | in-progress (body + fuel features done, unit tests green; e2e flows pending)
 T4.1 | insights | GATE A | W4 | Today, Progress, History, badge cabinet; charts render real data; undo works | pending
 T4.2 | platform | GATE A | W4 | PWA + Electron + export/import + demo seeder; offline reload + round-trip | pending
 T4.3 | qa | GATE A | W4 | Playwright suite + axe scans + content lint + perf budget | pending

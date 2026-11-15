@@ -53,3 +53,9 @@ export type NutritionTarget = {
   tdeeMultiplier: number
   goal: 'cut' | 'maintain' | 'lean-gain'
 }
+
+/**
+ * Water is logged as a zero-kcal food-log entry with this reserved
+ * foodId (grams = ml). Keeps the frozen log schema unchanged.
+ */
+export const WATER_FOOD_ID = 'water'

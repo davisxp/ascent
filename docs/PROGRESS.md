@@ -45,7 +45,21 @@ Updated after every wave by the orchestrator from subagent reports.
     virtualized list (56px rows, overscan windowing), full detail dialog (cues, mistakes,
     safety, equipment, chain step). Data from typed content seed. 8 filter tests.
   - Shared `ui/useDialog.ts` hook: focus trap + Escape + focus restore for all dialogs.
-- body-fuel: NOT started.
+- T3.3 body-fuel (in progress): both features implemented end-to-end.
+  - Body: weight logging with SVG trend chart, measurement entries per site with
+    deltas (pure `features/body/stats.ts`: weightSeries, latestBySite, BMI/WHO bands),
+    body profile inputs, photo capture via file picker (canvas downscale to 1024px JPEG
+    + 240px thumb, pure `features/body/photo.ts`), photo compare dialog with focus trap.
+  - Fuel: kcal/protein/fat/carbs rings against a TDEE target built by the pure
+    nutrition engine (session-scoped targets editor: weight/height/age/sex/activity/goal),
+    food search over the 89-food seeded database, grams + meal + add flow, custom-food
+    creation, per-meal today log with delete, water tracking (250 ml increments) and a
+    7-day kcal bar chart (pure `features/fuel/chart.ts`: lastNDays, totalsByDay,
+    dailyTotalsSeries with zero-fill).
+  - Data layer: `FoodRepositoryImpl.ensureSeeded()` populates the food table from the
+    typed content seed when empty (idempotent); water tracked as zero-kcal food-log
+    entries with reserved `WATER_FOOD_ID` ('water') and summed separately in `totals()`.
+  - Tests: 74 unit tests green (body stats + fuel chart suites added).
 
 ## GATE B
 - Not run

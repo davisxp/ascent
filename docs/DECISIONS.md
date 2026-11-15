@@ -41,3 +41,19 @@ Dated decision log with rationale. Updated by the orchestrator; subagents log cr
 ## 2026-11-15 — Active workout is in-memory until completion
 **Decision:** The in-flight workout lives in the zustand train slice only; it is persisted exactly once via `WorkoutRepositoryImpl.save` on completion. Quitting discards it (with an explicit confirm dialog).
 **Rationale:** Avoids partial-workout rows and PR/XP double-counting from half-saved sessions. Known limitation: an app reload mid-session loses progress — acceptable for v1; revisit if e2e shows users expect crash recovery.
+
+## 2026-11-15 — Water is a zero-kcal food-log entry
+**Decision:** Water intake is stored as `FoodLogEntry` rows with the reserved id `WATER_FOOD_ID` ('water'), grams = millilitres, kcal = 0. `totals()` sums water from those rows into `dailyWaterMl` instead of a separate table; Fuel filters them out of the food rings/list.
+**Rationale:** Contracts are frozen after W1, so no new `WaterLog` table is available. Reusing the existing append-only food-log repository keeps persistence schema-free while remaining queryable per day/range. Reserved ids are documented in `src/domain/fuel.ts`.
+
+## 2026-11-15 — Fuel nutrition targets are session-scoped
+**Decision:** TDEE/macros targets are recomputed via `useMemo` from editable inputs (weight, height, age, sex, activity, goal) prefilled from the body profile and latest weight entry; they are not persisted.
+**Rationale:** The body profile is the durable source of truth; duplicating targets in a second table risks drift. Editing inputs in Fuel is instant and stateless across reloads. Revisit with a persisted "nutrition settings" record if users expect target history.
+
+## 2026-11-15 — Food database seeded lazily at first Fuel visit
+**Decision:** `FoodRepositoryImpl.ensureSeeded(seed)` bulk-inserts the typed content foods only when the table is empty; Fuel calls it on mount. Custom foods are ordinary rows flagged `custom: true`.
+**Rationale:** Keeps the 89-food seed in `src/content` as the single source of truth while allowing user-created foods to persist alongside it, without a migration or app-start cost for non-Fuel users.
+
+## 2026-11-15 — Body photos come from the file picker only
+**Decision:** Photo capture uses `<input type="file">` and canvas downscaling to a 1024px JPEG plus a 240px thumbnail stored as data URLs; no camera APIs (`getUserMedia`) are used.
+**Rationale:** Mission forbids camera features in v1; the file picker covers gallery/mostly-camera workflows on desktop and mobile while staying offline-first.

@@ -55,6 +55,7 @@ import type {
   Centimeters,
   Kilograms,
 } from '../../domain/index'
+import { WATER_FOOD_ID } from '../../domain/fuel'
 
 // ---------- helpers ----------
 
@@ -344,6 +345,12 @@ export class FoodRepositoryImpl implements FoodRepository {
     const rows = await db.foods.filter((f) => f.custom === true).toArray()
     return rows.map(toFood)
   }
+  /** Populate the food database from the typed content seed when empty (idempotent). */
+  async ensureSeeded(seed: Food[]): Promise<void> {
+    const existing = await db.foods.count()
+    if (existing > 0) return
+    await db.foods.bulkPut(seed.map(toFoodRow))
+  }
 }
 
 function toFood(row: FoodRow): Food {
@@ -450,14 +457,20 @@ function toFoodLogEntryRow(e: FoodLogEntry): FoodLogEntryRow {
   }
 }
 
+/**
+ * Water is tracked as zero-kcal food-log entries with the reserved
+ * foodId 'water' (grams = ml). Contracts are frozen, so this keeps the
+ * log schema unchanged while making DailyTotals.waterMl real.
+ */
 function totals(entries: FoodLogEntry[], date: string): DailyTotals {
+  const foodEntries = entries.filter((e) => e.foodId !== WATER_FOOD_ID)
   return {
     date: branded<DateISO>(date),
-    kcal: Math.round(entries.reduce((s, e) => s + e.kcal, 0)),
-    proteinG: Math.round(entries.reduce((s, e) => s + e.proteinG, 0)),
-    fatG: Math.round(entries.reduce((s, e) => s + e.fatG, 0)),
-    carbsG: Math.round(entries.reduce((s, e) => s + e.carbsG, 0)),
-    waterMl: entries.reduce((s) => s + 0, 0),
+    kcal: Math.round(foodEntries.reduce((s, e) => s + e.kcal, 0)),
+    proteinG: Math.round(foodEntries.reduce((s, e) => s + e.proteinG, 0)),
+    fatG: Math.round(foodEntries.reduce((s, e) => s + e.fatG, 0)),
+    carbsG: Math.round(foodEntries.reduce((s, e) => s + e.carbsG, 0)),
+    waterMl: entries.reduce((s, e) => (e.foodId === WATER_FOOD_ID ? s + e.grams : s), 0),
   }
 }
 
