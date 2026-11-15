@@ -60,6 +60,13 @@ export const Train = () => {
           <p className="text-xs text-ink/50">
             Lv {level.level} · {level.rank} · streak {streak.current}
           </p>
+          <button
+            type="button"
+            className="text-xs text-pine underline mt-1"
+            onClick={() => void useTrainStore.getState().generateWeek(0)}
+          >
+            Regenerate week
+          </button>
         </div>
       </div>
 

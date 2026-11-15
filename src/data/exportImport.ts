@@ -17,7 +17,7 @@ import {
   GamificationRepositoryImpl,
   PhotoRepositoryImpl,
 } from './repositories'
-import { branded, type WorkoutId, type DateISO, type BodyEntryId, type MeasurementId, type ExerciseId, type Kilograms, type Centimeters } from '../domain/ids'
+import { branded, type WorkoutId, type DateISO, type BodyEntryId, type MeasurementId, type ExerciseId, type Kilograms, type Centimeters, type FoodId } from '../domain/ids'
 import type {
   Workout,
   WeightEntry,
@@ -88,8 +88,8 @@ function emptyProfile(): BodyProfile {
     sessionLength: 45,
     barEnabled: false,
     assessmentCompleted: false,
-    createdAt: new Date().toISOString() as unknown as string,
-    updatedAt: new Date().toISOString() as unknown as string,
+    createdAt: branded<DateISO>(new Date().toISOString()),
+    updatedAt: branded<DateISO>(new Date().toISOString()),
   } as unknown as BodyProfile
 }
 
@@ -97,28 +97,72 @@ export async function seedDemoData(): Promise<void> {
   const bodyRepo = new BodyRepositoryImpl()
   const foodRepo = new FoodRepositoryImpl()
   const foodLogRepo = new FoodLogRepositoryImpl()
+  const settingsRepo = new SettingsRepositoryImpl()
   await foodRepo.ensureSeeded([])
   const foods = await foodRepo.getAll()
-  const today = new Date().toISOString().slice(0, 10)
-  await bodyRepo.saveWeightEntry({
-    id: branded<BodyEntryId>('demo-w1'),
-    date: branded<DateISO>(today),
-    weightKg: branded<Kilograms>(75),
-    source: 'manual',
+  const today = new Date()
+  // 14 days of weight entries trending down
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(today.getTime() - i * 86400000).toISOString().slice(0, 10)
+    await bodyRepo.saveWeightEntry({
+      id: branded<BodyEntryId>(`demo-w-${i}`),
+      date: branded<DateISO>(d),
+      weightKg: branded<Kilograms>(76 - (13 - i) * 0.15),
+      source: 'manual',
+    })
+  }
+  await bodyRepo.saveProfile({
+    userId: 'user',
+    age: 28,
+    heightCm: branded<Centimeters>(178),
+    sex: 'male',
+    units: 'metric',
+    goal: 'balanced',
+    experience: 'intermediate',
+    daysPerWeek: 4,
+    sessionLength: 45,
+    barEnabled: true,
+    assessmentCompleted: true,
+    createdAt: branded<DateISO>(new Date().toISOString()),
+    updatedAt: branded<DateISO>(new Date().toISOString()),
   })
-  if (foods.length) {
-    const f = foods[0]
+  await settingsRepo.save({
+    theme: 'light',
+    sound: 'on',
+    defaultRestSeconds: 60,
+    units: 'metric',
+    wakeLock: true,
+    reducedMotion: false,
+  })
+  // 7 days of food logs
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today.getTime() - i * 86400000).toISOString().slice(0, 10)
+    if (foods.length) {
+      const f = foods[i % foods.length]
+      await foodLogRepo.save({
+        id: branded(`demo-fl-${i}`),
+        foodId: f.id,
+        foodName: f.name,
+        grams: 150,
+        kcal: Math.round(f.kcalPer100g * 1.5),
+        proteinG: Math.round(f.proteinGPer100g * 1.5),
+        fatG: Math.round(f.fatGPer100g * 1.5),
+        carbsG: Math.round(f.carbsGPer100g * 1.5),
+        meal: 'lunch',
+        date: branded<DateISO>(d),
+      })
+    }
     await foodLogRepo.save({
-      id: branded('demo-fl1'),
-      foodId: f.id,
-      foodName: f.name,
-      grams: 100,
-      kcal: f.kcalPer100g,
-      proteinG: f.proteinGPer100g,
-      fatG: f.fatGPer100g,
-      carbsG: f.carbsGPer100g,
-      meal: 'breakfast',
-      date: branded<DateISO>(today),
+      id: branded(`demo-water-${i}`),
+      foodId: 'water' as unknown as FoodId,
+      foodName: 'Water',
+      grams: 2000,
+      kcal: 0,
+      proteinG: 0,
+      fatG: 0,
+      carbsG: 0,
+      meal: 'snack',
+      date: branded<DateISO>(d),
     })
   }
 }

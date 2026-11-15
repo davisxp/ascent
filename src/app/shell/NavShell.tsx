@@ -65,13 +65,12 @@ export const NavShell = ({ children }: { children: ReactNode }) => {
             return (
               <button
                 key={item.id}
-                className="flex flex-col items-center gap-1 text-[11px]"
+                className={`flex flex-col items-center gap-1 text-[11px] px-2 py-1 rounded-[10px] ${
+                  active ? 'text-pine' : 'text-ink/50'
+                }`}
                 onClick={() => navigate(item.href)}
               >
-                <span className="text-sm">{item.label.slice(0, 1)}</span>
-                <span className={active ? 'font-bold text-pine' : 'text-ink/50'}>
-                  {item.label}
-                </span>
+                <span className={active ? 'font-bold' : ''}>{item.label}</span>
               </button>
             )
           })}

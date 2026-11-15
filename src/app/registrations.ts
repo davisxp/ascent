@@ -8,6 +8,7 @@ import { Fuel } from '../features/fuel/Fuel'
 import { Progress } from '../features/insights/Progress'
 import { History } from '../features/history/History'
 import { Settings } from '../features/settings/Settings'
+import { Onboarding } from '../features/onboarding/Onboarding'
 import { useTrainStore } from '../features/train/store'
 
 const routes = [
@@ -20,6 +21,7 @@ const routes = [
   { path: '/progress', element: Progress, label: 'Progress', icon: 'chart' },
   { path: '/history', element: History, label: 'History', icon: 'clock' },
   { path: '/settings', element: Settings, label: 'Settings', icon: 'gear' },
+  { path: '/onboarding', element: Onboarding, label: 'Onboarding', icon: 'star' },
 ]
 
 for (const r of routes) {
@@ -29,8 +31,9 @@ for (const r of routes) {
 // Train slice — registered through the central slice registry.
 sliceRegistry.register({ name: 'train', create: () => useTrainStore })
 
-// Desktop sidebar: all routes
+// Desktop sidebar: all routes except onboarding
 for (const r of routes) {
+  if (r.path === '/onboarding') continue
   navRegistry.register({ id: r.path, label: r.label, href: r.path, icon: r.icon, mobileOnly: false, desktopOnly: false })
 }
 

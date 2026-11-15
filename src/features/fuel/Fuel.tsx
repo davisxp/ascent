@@ -235,7 +235,10 @@ export const Fuel = () => {
   const deleteEntry = (entryId: string) => {
     void foodLogRepo.delete(entryId).then(reloadLog)
   }
-
+  const clearToday = () => {
+    if (!confirm('Clear all food and water logged today?')) return
+    void Promise.all(entries.map((e) => foodLogRepo.delete(e.id))).then(() => reloadLog())
+  }
   const addCustomFood = () => {
     const kcal = Number(customKcal)
     const p = Number(customP)
@@ -481,7 +484,14 @@ export const Fuel = () => {
 
       {/* today's log */}
       <Card className="mb-4">
-        <h2 className="font-display text-lg font-bold mb-2">Today</h2>
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <h2 className="font-display text-lg font-bold">Today</h2>
+          {entries.length > 0 && (
+            <Button variant="ghost" className="h-8 px-2 text-xs text-clay" onClick={clearToday}>
+              Clear today
+            </Button>
+          )}
+        </div>
         {foodEntries.length === 0 ? (
           <p className="text-sm text-ink/50">Nothing logged yet today.</p>
         ) : (

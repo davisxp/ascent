@@ -71,6 +71,9 @@ export const Body = () => {
   const [weightInput, setWeightInput] = useState('')
   const [site, setSite] = useState<MeasurementSite>('waist')
   const [measureInput, setMeasureInput] = useState('')
+  const [ageInput, setAgeInput] = useState('')
+  const [heightInput, setHeightInput] = useState('')
+  const [sexInput, setSexInput] = useState<'male' | 'female' | 'other'>('male')
   const [photoView, setPhotoView] = useState<Photo['view']>('front')
   const [photoBusy, setPhotoBusy] = useState(false)
   const [photoError, setPhotoError] = useState<string | null>(null)
@@ -88,6 +91,11 @@ export const Body = () => {
     setMeasurements(m)
     setPhotos(p)
     setProfile(prof)
+    if (prof) {
+      setAgeInput(String(prof.age ?? ''))
+      setHeightInput(String(prof.heightCm ?? ''))
+      setSexInput((prof.sex as 'male' | 'female' | 'other') ?? 'male')
+    }
   }, [])
 
   useEffect(() => {
@@ -110,6 +118,28 @@ export const Body = () => {
       cancelled = true
     }
   }, [])
+
+  const saveProfile = () => {
+    const age = Number(ageInput)
+    const height = Number(heightInput)
+    if (!(age > 0 && height > 0)) return
+    const next: BodyProfile = {
+      userId: profile?.userId ?? 'user',
+      age,
+      heightCm: branded<Centimeters>(height),
+      sex: sexInput,
+      units: profile?.units ?? 'metric',
+      goal: profile?.goal ?? 'balanced',
+      experience: profile?.experience ?? 'beginner',
+      daysPerWeek: profile?.daysPerWeek ?? 3,
+      sessionLength: profile?.sessionLength ?? 45,
+      barEnabled: profile?.barEnabled ?? false,
+      assessmentCompleted: true,
+      createdAt: profile?.createdAt ?? (new Date().toISOString() as unknown as DateISO),
+      updatedAt: new Date().toISOString() as unknown as DateISO,
+    }
+    void bodyRepo.saveProfile(next).then(reload)
+  }
 
   const addWeight = () => {
     const kg = Number(weightInput)
@@ -182,6 +212,52 @@ export const Body = () => {
     <div className="p-6 pb-24 md:pb-6 max-w-2xl mx-auto">
       <h1 className="font-display text-3xl font-bold tracking-tight mb-1">Body</h1>
       <p className="text-sm text-ink/60 mb-4">Weight, tape measurements, and progress photos — all on this device.</p>
+
+      {/* profile */}
+      <Card className="mb-4">
+        <h2 className="font-display text-lg font-bold mb-2">Body profile</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+          <label className="text-sm">
+            <span className="block text-[11px] font-mono uppercase text-ink/40 mb-1">Age</span>
+            <input
+              type="number"
+              min="10"
+              max="100"
+              value={ageInput}
+              onChange={(e) => setAgeInput(e.target.value)}
+              className="w-full h-11 rounded-[14px] border border-ink/20 px-3"
+            />
+          </label>
+          <label className="text-sm">
+            <span className="block text-[11px] font-mono uppercase text-ink/40 mb-1">Height cm</span>
+            <input
+              type="number"
+              min="100"
+              max="250"
+              value={heightInput}
+              onChange={(e) => setHeightInput(e.target.value)}
+              className="w-full h-11 rounded-[14px] border border-ink/20 px-3"
+            />
+          </label>
+          <label className="text-sm">
+            <span className="block text-[11px] font-mono uppercase text-ink/40 mb-1">Sex</span>
+            <select
+              value={sexInput}
+              onChange={(e) => setSexInput(e.target.value as 'male' | 'female' | 'other')}
+              className="w-full h-11 rounded-[14px] border border-ink/20 bg-white px-3 text-sm"
+            >
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+          <div className="flex items-end">
+            <Button onClick={saveProfile} disabled={!ageInput || !heightInput} className="h-11 px-5 w-full">
+              Save
+            </Button>
+          </div>
+        </div>
+      </Card>
 
       {/* weight */}
       <Card className="mb-4">

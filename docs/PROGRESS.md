@@ -87,3 +87,10 @@ Updated after every wave by the orchestrator from subagent reports.
 
 ## W6 release
 - Not started
+
+## Local dev (OpenBot agent)
+- Settings: export/import/reset/load-demo-data UI; sound/units/rest/theme/wakeLock/reducedMotion controls wired to settings repo.
+- Platform: Electron shell + builder config; PWA update prompt; offline status indicator.
+- Tests: axe scan on all 9 routes (chromium+mobile); e2e smoke + workout spec; playwright testMatch fixed.
+- Demo seeder: 14 days weight + profile + settings + 7 days food/water logs.
+- Train: regenerate-week button.

@@ -103,6 +103,14 @@ export const Settings = () => {
               />
               <span>Wake lock during workouts</span>
             </label>
+            <label className="text-sm flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={settings.reducedMotion}
+                onChange={(e) => save({ ...settings, reducedMotion: e.target.checked })}
+              />
+              <span>Reduced motion</span>
+            </label>
             <label className="text-sm">
               <span className="block text-ink/60 mb-1">Default rest (s)</span>
               <input
