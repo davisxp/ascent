@@ -93,6 +93,36 @@ function emptyProfile(): BodyProfile {
   } as unknown as BodyProfile
 }
 
+export async function seedDemoData(): Promise<void> {
+  const bodyRepo = new BodyRepositoryImpl()
+  const foodRepo = new FoodRepositoryImpl()
+  const foodLogRepo = new FoodLogRepositoryImpl()
+  await foodRepo.ensureSeeded([])
+  const foods = await foodRepo.getAll()
+  const today = new Date().toISOString().slice(0, 10)
+  await bodyRepo.saveWeightEntry({
+    id: branded<BodyEntryId>('demo-w1'),
+    date: branded<DateISO>(today),
+    weightKg: branded<Kilograms>(75),
+    source: 'manual',
+  })
+  if (foods.length) {
+    const f = foods[0]
+    await foodLogRepo.save({
+      id: branded('demo-fl1'),
+      foodId: f.id,
+      foodName: f.name,
+      grams: 100,
+      kcal: f.kcalPer100g,
+      proteinG: f.proteinGPer100g,
+      fatG: f.fatGPer100g,
+      carbsG: f.carbsGPer100g,
+      meal: 'breakfast',
+      date: branded<DateISO>(today),
+    })
+  }
+}
+
 export async function resetAllData(): Promise<void> {
   await db.transaction('rw', db.tables, async () => {
     await Promise.all(db.tables.map((t) => t.clear()))

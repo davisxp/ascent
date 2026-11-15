@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Card } from '../../ui/primitives'
 import { SettingsRepositoryImpl } from '../../data/repositories'
-import { exportBackup, importBackup, resetAllData } from '../../data/exportImport'
+import { exportBackup, importBackup, resetAllData, seedDemoData } from '../../data/exportImport'
 import type { UserSettings } from '../../domain/index'
 
 export const Settings = () => {
@@ -144,6 +144,25 @@ export const Settings = () => {
               if (f) onImportFile(f)
             }}
           />
+          <button
+            type="button"
+            disabled={busy}
+            onClick={async () => {
+              setBusy(true)
+              setStatus('')
+              try {
+                await seedDemoData()
+                setStatus('Demo data loaded.')
+              } catch (e) {
+                setStatus(e instanceof Error ? e.message : 'Seed failed.')
+              } finally {
+                setBusy(false)
+              }
+            }}
+            className="rounded-xl border border-ink/20 px-4 py-2 text-sm font-medium disabled:opacity-50"
+          >
+            Load demo data
+          </button>
           <button
             type="button"
             disabled={busy}
