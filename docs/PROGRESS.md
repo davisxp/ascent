@@ -35,7 +35,17 @@ Updated after every wave by the orchestrator from subagent reports.
     generator (mobility days were previously empty), unified `exerciseById` content lookup,
     1-based `exercise.step` handled correctly in swap paths.
   - Tests: 45 unit tests green (swap engine + FinishSummary render added).
-- skills-library, body-fuel: NOT started.
+- T3.2 skills-library (in progress): both features implemented end-to-end.
+  - Skills: interactive SVG skill trees per strength chain (nodes clickable, unlocked/
+    current/locked states) driven by the new pure `engine/skillTree.ts` (best-for-metric
+    over workout history, criteria evaluation, frontier detection). Accessible step-list
+    mirror, chain chips with per-chain progress, node detail + exercise detail dialog,
+    mobility hold-progress cards. 10 engine tests.
+  - Library: search + pattern filter (pure `features/library/filter.ts`), fixed-height
+    virtualized list (56px rows, overscan windowing), full detail dialog (cues, mistakes,
+    safety, equipment, chain step). Data from typed content seed. 8 filter tests.
+  - Shared `ui/useDialog.ts` hook: focus trap + Escape + focus restore for all dialogs.
+- body-fuel: NOT started.
 
 ## GATE B
 - Not run
