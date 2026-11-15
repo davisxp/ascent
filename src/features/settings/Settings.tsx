@@ -1,10 +1,82 @@
+import { useRef, useState } from 'react'
 import { Card } from '../../ui/primitives'
+import { exportBackup, importBackup } from '../../data/exportImport'
 
-export const Settings = () => (
-  <div className="p-6 pb-24 md:pb-6">
-    <h1 className="font-display text-3xl font-bold mb-4">Settings</h1>
-    <Card>
-      <p className="text-sm text-ink/50">Units, sound, rest defaults, export/import, demo data, reset.</p>
-    </Card>
-  </div>
-)
+export const Settings = () => {
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [status, setStatus] = useState<string>('')
+  const [busy, setBusy] = useState(false)
+
+  const onExport = async () => {
+    setBusy(true)
+    setStatus('')
+    try {
+      const { json, sizeMB, oversized } = await exportBackup()
+      const blob = new Blob([json], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `ascent-backup-${new Date().toISOString().slice(0, 10)}.json`
+      a.click()
+      URL.revokeObjectURL(url)
+      setStatus(`Exported (${sizeMB.toFixed(2)} MB)${oversized ? ' — large; consider pruning photos.' : ''}`)
+    } catch (e) {
+      setStatus(e instanceof Error ? e.message : 'Export failed.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const onImportFile = async (file: File) => {
+    setBusy(true)
+    setStatus('')
+    try {
+      const text = await file.text()
+      const res = await importBackup(text)
+      setStatus(res.ok ? 'Import complete.' : (res.error ?? 'Import failed.'))
+    } catch (e) {
+      setStatus(e instanceof Error ? e.message : 'Import failed.')
+    } finally {
+      setBusy(false)
+      if (fileRef.current) fileRef.current.value = ''
+    }
+  }
+
+  return (
+    <div className="p-6 pb-24 md:pb-6">
+      <h1 className="font-display text-3xl font-bold mb-4">Settings</h1>
+      <Card className="space-y-3">
+        <p className="text-sm text-ink/50">Units, sound, rest defaults, export/import, demo data, reset.</p>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            disabled={busy}
+            onClick={onExport}
+            className="rounded-xl bg-pine text-white px-4 py-2 text-sm font-medium disabled:opacity-50"
+          >
+            Export backup
+          </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => fileRef.current?.click()}
+            className="rounded-xl border border-ink/20 px-4 py-2 text-sm font-medium disabled:opacity-50"
+          >
+            Import backup
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="application/json"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0]
+              if (f) onImportFile(f)
+            }}
+          />
+        </div>
+        {status && <p className="text-sm text-ink/70">{status}</p>}
+      </Card>
+    </div>
+  )
+}

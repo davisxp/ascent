@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -17,6 +18,13 @@
     "audit:content": "node scripts/audit/content.mjs",
     "gate": "npm run typecheck && npm run lint && npm run test && npm run audit && npm run build",
     "dist:win": "electron-builder --win",
+  "build": {
+    "appId": "com.ascent.app",
+    "productName": "ASCENT",
+    "directories": { "output": "release" },
+    "files": ["dist/**/*", "electron/**/*"],
+    "win": { "target": "nsis" }
+  },
     "demo:reset": "node scripts/demo/reset.mjs",
     "postinstall": "node scripts/postinstall.mjs",
     "icons": "node scripts/build-icons.mjs"
