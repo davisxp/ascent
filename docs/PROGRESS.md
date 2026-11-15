@@ -98,5 +98,6 @@ Updated after every wave by the orchestrator from subagent reports.
 - Fuel: clear-today action.
 - Today: onboarding prompt for new users.
 - Onboarding: new /onboarding route capturing profile.
+- Critic (W5): docs/REVIEW.md written; targeted e2e specs added (fuel, export, workout, body, demo+offline); M7 perf mitigated (vendor chunks split).
 - De-AI UX: flattened redundant Cards into divider-separated sections across Today, Fuel, History, Skills, Body, Library, Progress; mobile bottom nav tightened (removed redundant glyphs, active highlight).
 - Gate (T4.3): build script restored in package.json (electron-builder config moved to top-level "build"); full gate green — typecheck + lint + 86 unit tests + 20 e2e + axe on all 9 routes (chromium+mobile) + content audit (100 exercises, 89 foods) + production build.

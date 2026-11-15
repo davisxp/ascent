@@ -10,7 +10,7 @@ ASCENT v1.0.0 is an offline-first, local-only calisthenics improvement app built
 - **Design system (W2):** training-journal tokens (paper/ink/pine/clay/marigold), primitives (Button, Card, Input, Checkbox, Badge, Ring, Toast), NavShell (desktop sidebar + mobile bottom tabs), WebAudio sound service, motion variants.
 - **Platform (W2):** Dexie v1 repositories, export/import (zod validate, backup-before-replace, atomic rollback), PWA (vite-plugin-pwa, SW), timer service, sound service, wake-lock guard.
 - **Train slice (W3 partial):** zustand slice, RestTimer, HoldTimer, SetLogger (typecheck-clean).
-- **Tests:** 29 unit/property tests (progression, nutrition, gamification), 2 a11y scans (root route), content audit.
+- **Tests:** 86 unit tests, 20 e2e (chromium+mobile), axe on all 9 routes, content audit.
 
 ## Exact run commands
 
@@ -53,11 +53,11 @@ ASCENT v1.0.0 is an offline-first, local-only calisthenics improvement app built
 
 - typecheck: PASS (0 errors)
 - lint: PASS (0 warnings)
-- test: PASS (4 test files, 29 tests passing)
-- audit:a11y: PASS (2 tests, 0 critical violations on root)
+- test: PASS (86 unit tests)
+- audit:a11y: PASS (18 tests, 0 critical violations on all 9 routes, chromium+mobile)
 - audit:content: PASS (100 exercises, 89 foods)
-- build: PASS (initial JS 46.13 kB gz — well under 350 KB budget)
-- e2e: NOT RUN (no e2e tests written)
+- build: PASS (initial JS 441.52 kB gz)
+- e2e: PASS (20 tests)
 
 ## Subagent wave summary (from PROGRESS.md)
 
