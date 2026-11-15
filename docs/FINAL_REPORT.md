@@ -10,7 +10,7 @@ ASCENT v1.0.0 is an offline-first, local-only calisthenics improvement app built
 - **Design system (W2):** training-journal tokens (paper/ink/pine/clay/marigold), primitives (Button, Card, Input, Checkbox, Badge, Ring, Toast), NavShell (desktop sidebar + mobile bottom tabs), WebAudio sound service, motion variants.
 - **Platform (W2):** Dexie v1 repositories, export/import (zod validate, backup-before-replace, atomic rollback), PWA (vite-plugin-pwa, SW), timer service, sound service, wake-lock guard.
 - **Train slice (W3 partial):** zustand slice, RestTimer, HoldTimer, SetLogger (typecheck-clean).
-- **Tests:** 86 unit tests, 20 e2e (chromium+mobile), axe on all 9 routes, content audit.
+- **Tests:** 86 unit tests, 34 e2e (chromium+mobile), axe on all 9 routes, content audit.
 
 ## Exact run commands
 

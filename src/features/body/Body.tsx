@@ -74,6 +74,9 @@ export const Body = () => {
   const [ageInput, setAgeInput] = useState('')
   const [heightInput, setHeightInput] = useState('')
   const [sexInput, setSexInput] = useState<'male' | 'female' | 'other'>('male')
+  const [goalInput, setGoalInput] = useState<'strength' | 'skills' | 'balanced' | 'flexibility'>('balanced')
+  const [experienceInput, setExperienceInput] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner')
+  const [daysInput, setDaysInput] = useState('3')
   const [photoView, setPhotoView] = useState<Photo['view']>('front')
   const [photoBusy, setPhotoBusy] = useState(false)
   const [photoError, setPhotoError] = useState<string | null>(null)
@@ -95,6 +98,9 @@ export const Body = () => {
       setAgeInput(String(prof.age ?? ''))
       setHeightInput(String(prof.heightCm ?? ''))
       setSexInput((prof.sex as 'male' | 'female' | 'other') ?? 'male')
+      setGoalInput((prof.goal as 'strength' | 'skills' | 'balanced' | 'flexibility') ?? 'balanced')
+      setExperienceInput((prof.experience as 'beginner' | 'intermediate' | 'advanced') ?? 'beginner')
+      setDaysInput(String(prof.daysPerWeek ?? 3))
     }
   }, [])
 
@@ -129,9 +135,9 @@ export const Body = () => {
       heightCm: branded<Centimeters>(height),
       sex: sexInput,
       units: profile?.units ?? 'metric',
-      goal: profile?.goal ?? 'balanced',
-      experience: profile?.experience ?? 'beginner',
-      daysPerWeek: profile?.daysPerWeek ?? 3,
+      goal: goalInput,
+      experience: experienceInput,
+      daysPerWeek: (Number(daysInput) || 3) as 2 | 3 | 4 | 5 | 6,
       sessionLength: profile?.sessionLength ?? 45,
       barEnabled: profile?.barEnabled ?? false,
       assessmentCompleted: true,
@@ -250,6 +256,42 @@ export const Body = () => {
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
+          </label>
+          <label className="text-sm">
+            <span className="block text-[11px] font-mono uppercase text-ink/40 mb-1">Goal</span>
+            <select
+              value={goalInput}
+              onChange={(e) => setGoalInput(e.target.value as 'strength' | 'skills' | 'balanced' | 'flexibility')}
+              className="w-full h-11 rounded-[14px] border border-ink/20 bg-white px-3 text-sm"
+            >
+              <option value="balanced">Balanced</option>
+              <option value="strength">Strength</option>
+              <option value="flexibility">Flexibility</option>
+              <option value="skills">Skill</option>
+            </select>
+          </label>
+          <label className="text-sm">
+            <span className="block text-[11px] font-mono uppercase text-ink/40 mb-1">Experience</span>
+            <select
+              value={experienceInput}
+              onChange={(e) => setExperienceInput(e.target.value as 'beginner' | 'intermediate' | 'advanced')}
+              className="w-full h-11 rounded-[14px] border border-ink/20 bg-white px-3 text-sm"
+            >
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </label>
+          <label className="text-sm">
+            <span className="block text-[11px] font-mono uppercase text-ink/40 mb-1">Days/week</span>
+            <input
+              type="number"
+              min="1"
+              max="7"
+              value={daysInput}
+              onChange={(e) => setDaysInput(e.target.value)}
+              className="w-full h-11 rounded-[14px] border border-ink/20 px-3"
+            />
           </label>
           <div className="flex items-end">
             <Button onClick={saveProfile} disabled={!ageInput || !heightInput} className="h-11 px-5 w-full">

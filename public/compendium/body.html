@@ -1,0 +1,89 @@
+<body>
+<!-- ============ KEY GATE ============ -->
+<div id="gate" class="hidden">
+  <div class="gate-card" id="gate-card">
+    <div class="monogram">X</div>
+    <div class="gate-title" id="gate-title">The Life Organisation</div>
+    <p class="gate-sub" id="gate-sub"></p>
+    <form id="gate-form" autocomplete="off">
+      <div class="field"><label id="gf1l" for="gf1">Key</label><input type="password" id="gf1" autocomplete="new-password" placeholder="••••••••"></div>
+      <div class="field" id="gf2w" style="display:none"><label for="gf2">Confirm key</label><input type="password" id="gf2" autocomplete="new-password" placeholder="••••••••"></div>
+      <label class="ck" style="justify-content:center;margin:2px 0 12px"><input type="checkbox" id="gate-show"><span class="box"></span><span class="tx" style="font-size:12.5px;color:var(--muted)">show key while typing</span></label>
+      <label class="ck" style="justify-content:center;margin:0 0 12px"><input type="checkbox" id="gate-remember" checked><span class="box"></span><span class="tx" style="font-size:12.5px;color:var(--muted)">Remember this device — open straight in next time</span></label>
+      <button class="btn gold" id="gate-btn" type="submit" style="width:100%;justify-content:center">Unlock</button>
+    </form>
+    <div class="gate-err" id="gate-err"></div>
+    <p class="note" id="gate-note"></p>
+    <button class="linkbtn" id="gate-forget" style="display:none;margin-top:6px">Forgotten key? Erase everything &amp; start over</button>
+  </div>
+</div>
+
+<!-- ============ COMMAND PALETTE & TOAST ============ -->
+<div id="palette" role="dialog" aria-label="Command palette">
+  <div class="pal-box">
+    <input type="text" id="pal-in" placeholder="Jump to a section, course, garment, contact…" autocomplete="off" aria-label="Search the compendium">
+    <div class="pal-list" id="pal-list"></div>
+    <div class="pal-foot"><span>↑↓ navigate</span><span>↵ open</span><span>esc close</span><span>&gt; commands</span><span>ctrl/⌘ K</span></div>
+  </div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side">
+    <div class="brand">
+      <div class="monogram">X</div>
+      <div>
+        <h1>The Life<br>Organisation</h1>
+        <small>Personal Compendium</small>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="nav-label">Sections</div>
+      <!-- nav links injected -->
+    </nav>
+    <div class="side-foot">
+      <span class="contact-line">✉ <a id="f-email" href="#"></a></span>
+      <span class="contact-line">☏ <a id="f-phone" href="#"></a></span>
+      <span class="contact-line">in <a id="f-linkedin" href="#" target="_blank" rel="noopener"></a></span>
+      <div style="margin-top:10px">Workbook data as of <span id="f-asof"></span></div>
+      <div style="margin-top:4px">Compendium <b id="f-ver"></b> · V1 launch build</div>
+      <span class="reset-link" id="reset-all" title="Clear all locally stored edits (ticks, contacts, notes) and restore sheet data">↺ Reset local edits</span>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb">
+        <span class="rn" id="tb-rn"></span>
+        <h2 id="tb-title"></h2>
+        <span class="sub" id="tb-sub"></span>
+      </div>
+      <input type="text" id="capture" placeholder="capture:  w 65.4 · b Bench 55x8 · c 30 · s 7.5 4 · @ contact" aria-label="Quick capture">
+      <div class="top-right">
+        <button class="iconbtn" id="read-btn" title="Reading mode (serif measure)" aria-pressed="false">❦</button>
+        <div class="clock">
+          <div class="d" id="clk-date"></div>
+          <div class="t" id="clk-time"></div>
+        </div>
+        <button class="iconbtn" id="edit-btn" title="Edit mode: change any underlined value" aria-label="Edit mode" aria-pressed="false">✎</button>
+        <button class="iconbtn" id="fs-btn" title="Fullscreen (F11)" aria-label="Fullscreen" aria-pressed="false"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+        <button class="iconbtn" id="side-btn" title="Collapse sidebar" aria-label="Collapse sidebar">«</button>
+        <button class="iconbtn" id="lock-btn" title="Lock the compendium" aria-label="Lock the compendium"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></button>
+        <button class="iconbtn" id="theme-btn" title="Toggle theme (light / dark / auto)" aria-label="Toggle theme">☾</button>
+      </div>
+    </div>
+    <main class="content" id="view"><!-- rendered --></main>
+  </div>
+</div>
+
+<script>
+const DATA = __DATA__;
+</script>
+<script>
+__APP__
+</script>
+</body>
+</html>

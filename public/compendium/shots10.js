@@ -1,0 +1,27 @@
+const p=require('puppeteer');const path=require('path');
+const file='file://'+path.resolve('index.html');
+const errs=[];
+(async()=>{
+  const b=await p.launch({args:['--no-sandbox','--disable-dev-shm-usage']});
+  const pg=await b.newPage();
+  pg.on('pageerror',e=>errs.push(e.message));
+  await pg.setViewport({width:1440,height:1050});
+  await pg.goto(file,{waitUntil:'networkidle0'});
+  await pg.type('#gf1','compendium'); await pg.type('#gf2','compendium');
+  await pg.click('#gate-btn'); await new Promise(r=>setTimeout(r,500));
+  await pg.goto(file+'#/travel',{waitUntil:'networkidle0'}); await new Promise(r=>setTimeout(r,300));
+  await pg.type('#place-form [name=place]','Kyoto');
+  await pg.select('#place-form [name=kind]','Been');
+  await pg.type('#place-form [name=when]','Apr 2024');
+  await pg.type('#place-form [name=eat]','Okonomiyaki at Kiji, dusk queue worth it');
+  await pg.type('#place-form [name=stay]','Ryokan in Gion, tatami & rain');
+  await pg.type('#place-form [name=do]','Fushimi Inari at 6am, before the crowds');
+  await pg.click('#place-save'); await new Promise(r=>setTimeout(r,300));
+  await pg.screenshot({path:'shots/i-travel.png'});
+  await pg.goto(file+'#/body',{waitUntil:'networkidle0'}); await new Promise(r=>setTimeout(r,300));
+  await pg.evaluate(()=>{ const s=document.getElementById('def-slider'); s.value='-300'; s.dispatchEvent(new Event('input',{bubbles:true})); });
+  await new Promise(r=>setTimeout(r,250));
+  await pg.screenshot({path:'shots/i-slider.png'});
+  console.log('ERRORS:',errs.length);
+  await b.close();
+})();

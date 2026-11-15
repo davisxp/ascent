@@ -54,6 +54,12 @@ export const Train = () => {
         <div>
           <h1 className="font-display text-3xl font-bold tracking-tight mb-1">Train</h1>
           <p className="text-sm text-ink/60">Your week, generated from your placements.</p>
+          {weekPlan && (
+            <p className="text-xs font-mono text-ink/40 mt-1">
+              Mesocycle week {(weekPlan.index ?? 0) + 1} of 4
+              {isDeload ? ' · deload' : ''}
+            </p>
+          )}
         </div>
         <div className="text-right shrink-0">
           <p className="font-mono text-lg font-bold text-marigold">{level.xp} XP</p>

@@ -1,0 +1,21 @@
+const p=require('puppeteer');const path=require('path');
+const file='file://'+path.resolve('index.html');
+const errs=[];
+(async()=>{
+  const b=await p.launch({args:['--no-sandbox','--disable-dev-shm-usage']});
+  const pg=await b.newPage();
+  pg.on('pageerror',e=>errs.push(e.message));
+  await pg.setViewport({width:1440,height:1100});
+  await pg.goto(file,{waitUntil:'networkidle0'});
+  await pg.type('#gf1','compendium'); await pg.type('#gf2','compendium');
+  await pg.click('#gate-btn'); await new Promise(r=>setTimeout(r,500));
+  await pg.evaluate(()=>{ window.scrollTo(0, document.body.scrollHeight); });
+  await new Promise(r=>setTimeout(r,400));
+  await pg.screenshot({path:'shots/m-dash-bottom.png'});
+  await pg.goto(file+'#/body',{waitUntil:'networkidle0'}); await new Promise(r=>setTimeout(r,400));
+  await pg.evaluate(()=>{ const el=[...document.querySelectorAll('.card-t')].find(e=>e.textContent.includes('blood panel')); if(el) el.scrollIntoView(); });
+  await new Promise(r=>setTimeout(r,300));
+  await pg.screenshot({path:'shots/m-bloods.png'});
+  console.log('ERRORS:',errs.length);
+  await b.close();
+})();

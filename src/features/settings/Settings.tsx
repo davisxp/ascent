@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Card } from '../../ui/primitives'
+// Card removed — flat sections
 import { SettingsRepositoryImpl } from '../../data/repositories'
 import { exportBackup, importBackup, resetAllData, seedDemoData } from '../../data/exportImport'
 import type { UserSettings } from '../../domain/index'
@@ -57,8 +57,8 @@ export const Settings = () => {
   return (
     <div className="p-6 pb-24 md:pb-6">
       <h1 className="font-display text-3xl font-bold mb-4">Settings</h1>
-      <Card className="space-y-4">
-        <p className="text-sm text-ink/50">Units, sound, rest defaults, export/import, demo data, reset.</p>
+      <section className="mb-6 pb-6 border-b border-ink/8">
+        <p className="text-sm text-ink/50 mb-4">Units, sound, rest defaults, export/import, demo data, reset.</p>
 
         {settings && (
           <div className="grid gap-3 sm:grid-cols-2">
@@ -213,7 +213,7 @@ export const Settings = () => {
           </button>
         </div>
         {status && <p className="text-sm text-ink/70">{status}</p>}
-      </Card>
+      </section>
     </div>
   )
 }

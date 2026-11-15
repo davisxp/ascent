@@ -9,6 +9,7 @@ import { Progress } from '../features/insights/Progress'
 import { History } from '../features/history/History'
 import { Settings } from '../features/settings/Settings'
 import { Onboarding } from '../features/onboarding/Onboarding'
+import { Compendium } from '../features/compendium/Compendium'
 import { useTrainStore } from '../features/train/store'
 
 const routes = [
@@ -22,6 +23,7 @@ const routes = [
   { path: '/history', element: History, label: 'History', icon: 'clock' },
   { path: '/settings', element: Settings, label: 'Settings', icon: 'gear' },
   { path: '/onboarding', element: Onboarding, label: 'Onboarding', icon: 'star' },
+  { path: '/compendium', element: Compendium, label: 'Compendium', icon: 'book' },
 ]
 
 for (const r of routes) {
