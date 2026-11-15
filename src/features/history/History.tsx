@@ -293,7 +293,7 @@ export const History = () => {
         </Card>
       )}
 
-      <Card>
+      <div className="mt-4 border-t border-ink/10 pt-4">
         <h2 className="font-display text-lg font-bold mb-1">
           {monthTitle(view.year, view.month)} sessions
         </h2>
@@ -306,7 +306,7 @@ export const History = () => {
             ))}
           </ul>
         )}
-      </Card>
+      </div>
     </div>
   )
 }

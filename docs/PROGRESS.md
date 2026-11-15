@@ -89,8 +89,14 @@ Updated after every wave by the orchestrator from subagent reports.
 - Not started
 
 ## Local dev (OpenBot agent)
-- Settings: export/import/reset/load-demo-data UI; sound/units/rest/theme/wakeLock/reducedMotion controls wired to settings repo.
-- Platform: Electron shell + builder config; PWA update prompt; offline status indicator.
+- Settings: export/import/reset/load-demo-data/copy-backup UI; sound/units/rest/theme/wakeLock/reducedMotion controls wired to settings repo.
+- Platform: Electron shell + builder config; PWA update prompt; offline status indicator; mobile nav UX fix.
 - Tests: axe scan on all 9 routes (chromium+mobile); e2e smoke + workout spec; playwright testMatch fixed.
 - Demo seeder: 14 days weight + profile + settings + 7 days food/water logs.
 - Train: regenerate-week button.
+- Body: profile editor (age/height/sex).
+- Fuel: clear-today action.
+- Today: onboarding prompt for new users.
+- Onboarding: new /onboarding route capturing profile.
+- De-AI UX: flattened redundant Cards into divider-separated sections across Today, Fuel, History, Skills, Body, Library, Progress; mobile bottom nav tightened (removed redundant glyphs, active highlight).
+- Gate (T4.3): build script restored in package.json (electron-builder config moved to top-level "build"); full gate green — typecheck + lint + 86 unit tests + 20 e2e + axe on all 9 routes (chromium+mobile) + content audit (100 exercises, 89 foods) + production build.

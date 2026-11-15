@@ -27,7 +27,7 @@ import {
   User,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import { Badge, Card, Ring } from '../../ui/primitives'
+import { Badge, Ring } from '../../ui/primitives'
 import {
   WorkoutRepositoryImpl,
   GamificationRepositoryImpl,
@@ -266,7 +266,7 @@ export const Progress = () => {
       <h1 className="font-display text-3xl font-bold tracking-tight mb-1">Progress</h1>
       <p className="text-sm text-ink/60 mb-4">Your training, measured.</p>
 
-      <Card className="mb-4">
+      <section className="mb-6 pb-6 border-b border-ink/8">
         <div className="flex items-center justify-around gap-4 flex-wrap">
           <div className="flex items-center gap-3">
             <Ring
@@ -295,26 +295,26 @@ export const Progress = () => {
             <p className="text-[10px] text-ink/40 font-mono">{Math.round(totalMinutes)} min total</p>
           </div>
         </div>
-      </Card>
+      </section>
 
-      <Card className="mb-4">
+      <section className="mb-6 pb-6 border-b border-ink/8">
         <h2 className="font-display text-lg font-bold mb-3">Last 12 weeks</h2>
         <Heatmap workouts={workouts} />
-      </Card>
+      </section>
 
-      <Card className="mb-4">
+      <section className="mb-6 pb-6 border-b border-ink/8">
         <h2 className="font-display text-lg font-bold mb-3">Volume by pattern</h2>
         <VolumeChart workouts={workouts} />
-      </Card>
+      </section>
 
-      <Card className="mb-4">
+      <section className="mb-6 pb-6 border-b border-ink/8">
         <h2 className="font-display text-lg font-bold mb-1">PR timeline</h2>
         <PrTimeline workouts={workouts} />
-      </Card>
+      </section>
 
-      <Card>
+      <section>
         <BadgeCabinet earnedIds={earned} />
-      </Card>
+      </section>
     </div>
   )
 }

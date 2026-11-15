@@ -345,20 +345,20 @@ export const Skills = () => {
 
       {/* mobility progress */}
       <h2 className="font-display text-xl font-bold mt-8 mb-3">Mobility</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <ul className="divide-y divide-ink/10">
         {mobilityEntries.map(({ exercise, best }) => (
-          <Card key={exercise.id}>
+          <li key={exercise.id} className="py-3">
             <p className="font-display text-base font-bold leading-tight">{exercise.name}</p>
-            <div className="flex flex-wrap gap-2 mt-1 mb-2">
+            <div className="flex flex-wrap gap-2 mt-1 mb-1">
               <Badge variant="pine">Difficulty {exercise.difficulty}</Badge>
               <Badge variant="info">Hold</Badge>
             </div>
             <p className="text-sm text-ink/60">
               {best === null ? 'Not logged yet' : `Best hold: ${best}s`}
             </p>
-          </Card>
+          </li>
         ))}
-      </div>
+      </ul>
 
       {/* detail dialog */}
       {detailNode && detail && (

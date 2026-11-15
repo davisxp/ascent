@@ -93,7 +93,7 @@ export const Library = () => {
         </select>
       </div>
 
-      <Card className="p-0 overflow-hidden">
+      <div className="rounded-[14px] border border-ink/10 overflow-hidden">
         <div
           className="overflow-y-auto"
           style={{ height: VIEWPORT_HEIGHT }}
@@ -123,7 +123,7 @@ export const Library = () => {
             </div>
           )}
         </div>
-      </Card>
+      </div>
 
       {selected && <ExerciseDetailDialog exercise={selected} onClose={() => setSelectedId(null)} />}
     </div>

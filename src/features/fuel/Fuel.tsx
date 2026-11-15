@@ -530,7 +530,7 @@ export const Fuel = () => {
       </Card>
 
       {/* week chart */}
-      <Card>
+      <div className="mt-4 border-t border-ink/10 pt-4">
         <h2 className="font-display text-lg font-bold mb-2">Last 7 days</h2>
         <KcalBars series={weekSeries} target={target?.kcal ?? 2000} />
         <ul className="flex justify-between mt-1 px-1" aria-hidden="true">
@@ -540,7 +540,7 @@ export const Fuel = () => {
             </li>
           ))}
         </ul>
-      </Card>
+      </div>
     </div>
   )
 }

@@ -214,7 +214,7 @@ export const Body = () => {
       <p className="text-sm text-ink/60 mb-4">Weight, tape measurements, and progress photos — all on this device.</p>
 
       {/* profile */}
-      <Card className="mb-4">
+      <section className="mb-6 pb-6 border-b border-ink/8">
         <h2 className="font-display text-lg font-bold mb-2">Body profile</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
           <label className="text-sm">
@@ -257,10 +257,10 @@ export const Body = () => {
             </Button>
           </div>
         </div>
-      </Card>
+      </section>
 
       {/* weight */}
-      <Card className="mb-4">
+      <section className="mb-6 pb-6 border-b border-ink/8">
         <div className="flex items-start justify-between gap-3 mb-2">
           <h2 className="font-display text-lg font-bold">Weight</h2>
           {latestWeight != null && (
@@ -316,10 +316,10 @@ export const Body = () => {
             Log weight
           </Button>
         </div>
-      </Card>
+      </section>
 
       {/* measurements */}
-      <Card className="mb-4">
+      <section className="mb-6 pb-6 border-b border-ink/8">
         <h2 className="font-display text-lg font-bold mb-2">Measurements</h2>
         {siteSummaries.length > 0 ? (
           <ul className="grid grid-cols-2 gap-x-4 gap-y-1 mb-3">
@@ -369,10 +369,10 @@ export const Body = () => {
             Log tape
           </Button>
         </div>
-      </Card>
+      </section>
 
       {/* photos */}
-      <Card>
+      <section>
         <div className="flex items-start justify-between gap-3 mb-2">
           <h2 className="font-display text-lg font-bold">Progress photos</h2>
           <Badge variant="info">On device only</Badge>
@@ -455,7 +455,7 @@ export const Body = () => {
             )}
           </div>
         )}
-      </Card>
+      </section>
 
       {compare && <CompareDialog view={compare.view} onClose={() => setCompare(null)} />}
     </div>

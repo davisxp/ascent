@@ -63,6 +63,7 @@ export const Today = () => {
   const [todaysPlan, setTodaysPlan] = useState<DayPlan | null>(null)
   const [doneToday, setDoneToday] = useState<Workout | null>(null)
   const [recent, setRecent] = useState<Workout[]>([])
+  const [hasProfile, setHasProfile] = useState<boolean | null>(null)
   const today = todayISO()
 
   useEffect(() => {
@@ -77,13 +78,14 @@ export const Today = () => {
       gamificationRepo.getStreak().catch(() => null),
       foodLogRepo.getDailyTotals(today).catch(() => null),
       bodyRepo.getWeightEntries().catch(() => []),
+      bodyRepo.getProfile().catch(() => null),
       workoutRepo.getByDate(today).catch(() => null),
       workoutRepo.getAll().catch(() => [] as Workout[]),
       Promise.all(last7.map((d) => dayPlanRepo.getWeek(d).catch(() => [] as DayPlan[])))
         .then((weeks) => weeks.flat())
         .catch(() => [] as DayPlan[]),
     ])
-      .then(([lv, st, totals, weights, logged, all, plans]) => {
+      .then(([lv, st, totals, weights, profile, logged, all, plans]) => {
         if (cancelled) return
         setLevel(lv)
         setStreak(st)
@@ -91,6 +93,7 @@ export const Today = () => {
         const sorted = [...weights].sort((a, b) => (a.date < b.date ? -1 : 1))
         const latest = sorted.at(-1)
         if (latest) setWeight(latest.weightKg)
+        setHasProfile(!!profile?.assessmentCompleted)
         if (logged?.completedAt) setDoneToday(logged)
         setRecent(all.filter((w) => w.completedAt).sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 5))
         setTodaysPlan(plans.find((p) => p.date === today) ?? null)
@@ -146,6 +149,18 @@ export const Today = () => {
         </div>
       </Card>
 
+      {hasProfile === false && (
+        <Card className="mb-4 border-pine">
+          <h2 className="font-display text-lg font-bold mb-1">Welcome</h2>
+          <p className="text-sm text-ink/60 mb-3">
+            Set up your profile to generate a personalized plan.
+          </p>
+          <Button variant="primary" className="h-11 px-5" onClick={() => navigate('/onboarding')}>
+            Start onboarding
+          </Button>
+        </Card>
+      )}
+
       <Card className="mb-4">
         <div className="flex items-center justify-between gap-3 mb-2">
           <h2 className="font-display text-lg font-bold">Today's session</h2>
@@ -195,7 +210,9 @@ export const Today = () => {
         )}
       </Card>
 
-      <Card>
+      <div className="border-t border-ink/10 my-4" />
+
+      <div>
         <h2 className="font-display text-lg font-bold mb-2">Recent workouts</h2>
         {recent.length === 0 ? (
           <p className="text-sm text-ink/50">No workouts yet. Start your first session.</p>
@@ -214,7 +231,7 @@ export const Today = () => {
             ))}
           </ul>
         )}
-      </Card>
+      </div>
     </div>
   )
 }

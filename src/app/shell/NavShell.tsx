@@ -4,24 +4,15 @@
  * Routes/nav items registered via registries.
  */
 
-import { useEffect, useState, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { useRouter } from '../useRouter'
+import { useOnlineStatus } from '../../platform/useOnlineStatus'
 import { navRegistry } from '../../contracts/registries'
 import { Button } from '../../ui/primitives'
 
 export const NavShell = ({ children }: { children: ReactNode }) => {
   const { currentPath, navigate } = useRouter()
-  const [online, setOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true)
-  useEffect(() => {
-    const on = () => setOnline(true)
-    const off = () => setOnline(false)
-    window.addEventListener('online', on)
-    window.addEventListener('offline', off)
-    return () => {
-      window.removeEventListener('online', on)
-      window.removeEventListener('offline', off)
-    }
-  }, [])
+  const online = useOnlineStatus()
   const mobileItems = navRegistry.getMobile()
   const desktopItems = navRegistry.getDesktop()
 
