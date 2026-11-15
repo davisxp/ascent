@@ -95,6 +95,14 @@ export const Settings = () => {
                 <option value="imperial">Imperial</option>
               </select>
             </label>
+            <label className="text-sm flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={settings.wakeLock}
+                onChange={(e) => save({ ...settings, wakeLock: e.target.checked })}
+              />
+              <span>Wake lock during workouts</span>
+            </label>
             <label className="text-sm">
               <span className="block text-ink/60 mb-1">Default rest (s)</span>
               <input
