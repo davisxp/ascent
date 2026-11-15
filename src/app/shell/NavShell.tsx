@@ -56,7 +56,7 @@ export const NavShell = ({ children }: { children: ReactNode }) => {
         </nav>
       </aside>
 
-      <div className="flex-1 relative overflow-y-auto">{children}</div>
+      <div className="flex-1 relative overflow-y-auto pb-20 md:pb-0">{children}</div>
 
       <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-ink/10 bg-white/90 backdrop-blur-md z-40">
         <div className="flex justify-around px-2 py-2">
