@@ -113,3 +113,5 @@ button {
   white-space: nowrap;
   border: 0;
 }
+
+html, body, #root { min-height: 100%; overflow-y: auto; }

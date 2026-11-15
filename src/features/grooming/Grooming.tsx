@@ -1,18 +1,45 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useEffect, useState } from 'react'
+import { GroomingRepositoryImpl } from '../../data/repositories'
 import data from '../../content/compendium.json'
+
+const repo = new GroomingRepositoryImpl()
+
 export function Grooming() {
   const c = data as any
+  const [routines, setRoutines] = useState<any[]>([])
+  const load = async () => setRoutines(await repo.getAll())
+  useEffect(() => { load() }, [])
+
+  const add = async (title: string, period: 'am' | 'pm') => { if (!title) return; await repo.save({ id: crypto.randomUUID(), title, period, steps: [] }); load() }
+  const remove = async (id: string) => { await repo.delete(id); load() }
+
   return (
-    <div style={{ padding: 24, display: 'grid', gap: 16 }}>
-      <h1>Grooming</h1>
+    <div className="p-6 space-y-4 text-ink">
+      <h1 className="font-display text-2xl">Grooming</h1>
+      <GroomingRoutines routines={routines} onAdd={add} onRemove={remove} />
       <p>Skin: {c.grooming?.skin?.Classification} · {c.grooming?.skin?.['Fitzpatrick Type']}</p>
-      <h3>AM</h3>
-      <ul>{(c.grooming?.am ?? []).map((s: any, i: number) => <li key={i}>{s.step}: {(s.items ?? []).join(', ')}</li>)}</ul>
-      <h3>PM</h3>
-      <ul>{(c.grooming?.pm ?? []).map((s: any, i: number) => <li key={i}>{s.step}: {(s.items ?? []).join(', ')}</li>)}</ul>
-      <h3>Biweekly</h3>
-      <ul>{(c.grooming?.biweekly ?? []).map((b: any, i: number) => <li key={i}>{b.name}{b.on ? ' (on)' : ''}{b.note ? ` — ${b.note}` : ''}</li>)}</ul>
-      <h3>Fragrances</h3>
-      <ul>{(c.grooming?.fragrances ?? []).map((f: any, i: number) => <li key={i}>{f.season} {f.time}: {f.name}{f.owned ? ' (owned)' : ''}</li>)}</ul>
+    </div>
+  )
+}
+
+function GroomingRoutines({ routines, onAdd, onRemove }: { routines: any[]; onAdd: (t: string, p: 'am' | 'pm') => void; onRemove: (id: string) => void }) {
+  const [title, setTitle] = useState('')
+  const [period, setPeriod] = useState<'am' | 'pm'>('am')
+  return (
+    <div className="bg-white border border-ink/10 rounded-xl p-4 space-y-2">
+      <div className="flex gap-2">
+        <input className="border rounded px-2 py-1" placeholder="Routine" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <select className="border rounded px-2 py-1" value={period} onChange={(e) => setPeriod(e.target.value as any)}>
+          <option value="am">AM</option>
+          <option value="pm">PM</option>
+        </select>
+        <button className="px-3 py-1 bg-pine text-white rounded" onClick={() => { onAdd(title, period); setTitle('') }}>Add</button>
+      </div>
+      <ul className="text-sm space-y-1">
+        {routines.map((rt: any) => <li key={rt.id} className="flex justify-between"><span>{rt.title} — {rt.period}</span><button className="text-clay" onClick={() => onRemove(rt.id)}>Delete</button></li>)}
+      </ul>
     </div>
   )
 }

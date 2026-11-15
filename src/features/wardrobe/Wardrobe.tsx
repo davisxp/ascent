@@ -1,17 +1,59 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useEffect, useState } from 'react'
+import { WardrobeRepositoryImpl } from '../../data/repositories'
 import data from '../../content/compendium.json'
+
+const repo = new WardrobeRepositoryImpl()
+
 export function Wardrobe() {
   const c = data as any
+  const w = c.wardrobe ?? {}
+  const [items, setItems] = useState<any[]>([])
+  const load = async () => setItems(await repo.getAll())
+  useEffect(() => { load() }, [])
+
+  const add = async (name: string, category: string) => {
+    if (!name) return
+    await repo.save({ id: crypto.randomUUID(), name, category: category || 'misc', status: 'owned' })
+    load()
+  }
+  const remove = async (id: string) => { await repo.delete(id); load() }
+
   return (
-    <div style={{ padding: 24, display: 'grid', gap: 16 }}>
-      <h1>Wardrobe</h1>
-      <p>{c.wardrobe?.totals?.owned ?? 0} owned · {c.wardrobe?.totals?.restoration ?? 0} restoration · {c.wardrobe?.totals?.missing ?? 0} missing</p>
-      {(c.wardrobe?.categories ?? []).map((cat: any) => (
-        <details key={cat.name} style={{ marginBottom: 8 }}>
+    <div className="p-6 space-y-6 text-ink">
+      <h1 className="font-display text-2xl">Wardrobe</h1>
+      <p>{w.totals?.owned ?? 0} owned · {w.totals?.restoration ?? 0} restoration · {w.totals?.missing ?? 0} missing</p>
+      <WardrobeItems items={items} onAdd={add} onRemove={remove} />
+      {(w.categories ?? []).map((cat: any, i: number) => (
+        <details key={i} style={{ marginBottom: 8 }}>
           <summary>{cat.name} ({cat.items?.length ?? 0})</summary>
-          <ul>{(cat.items ?? []).map((it: any, i: number) => <li key={i}>{it.n} — {it.s}</li>)}</ul>
+          <ul>{(cat.items ?? []).map((it: any, j: number) => <li key={j}>{it.n} — {it.s}</li>)}</ul>
         </details>
       ))}
-      <p>Sizes: {(c.wardrobe?.sizes ?? []).map((s: any) => `${s[0]}: ${s[1]}`).join(', ')}</p>
+      <p>Sizes: {(w.sizes ?? []).map((s: any) => `${s[0]}: ${s[1]}`).join(', ')}</p>
+    </div>
+  )
+}
+
+function WardrobeItems({ items, onAdd, onRemove }: { items: any[]; onAdd: (n: string, c: string) => void; onRemove: (id: string) => void }) {
+  const [name, setName] = useState('')
+  const [category, setCategory] = useState('')
+  return (
+    <div className="bg-white border border-ink/10 rounded-xl p-4 space-y-2">
+      <div className="flex gap-2">
+        <input className="border rounded px-2 py-1" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+        <input className="border rounded px-2 py-1" placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} />
+        <button className="px-3 py-1 bg-pine text-white rounded" onClick={() => { onAdd(name, category); setName(''); setCategory('') }}>Add</button>
+      </div>
+      <ul className="text-sm space-y-1">
+        {items.map((it: any) => (
+          <li key={it.id} className="flex justify-between">
+            <span>{it.name} — {it.category} ({it.status})</span>
+            <button className="text-clay" onClick={() => onRemove(it.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

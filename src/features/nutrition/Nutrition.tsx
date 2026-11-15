@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import data from '../../content/compendium.json'
 export function Nutrition() {
   const c = data as any
@@ -10,3 +11,4 @@ export function Nutrition() {
     </div>
   )
 }
+

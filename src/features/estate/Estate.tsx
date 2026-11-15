@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import data from '../../content/compendium.json'
 export function Estate() {
   const c = data as any
@@ -13,3 +14,4 @@ export function Estate() {
     </div>
   )
 }
+

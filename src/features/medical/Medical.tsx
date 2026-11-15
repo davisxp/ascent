@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import data from '../../content/compendium.json'
 export function Medical() {
   const c = data as any
@@ -12,3 +13,4 @@ export function Medical() {
     </div>
   )
 }
+

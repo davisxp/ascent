@@ -598,3 +598,126 @@ export class PhotoRepositoryImpl implements PhotoRepository {
     await db.photos.delete(id)
   }
 }
+
+// ---------- task ----------
+import type { TaskRepository } from "../../contracts/repositories"
+import type { Task } from "../../domain/task"
+
+export class TaskRepositoryImpl implements TaskRepository {
+  async getAll(): Promise<Task[]> {
+    const rows = await db.tasks.toArray()
+    return rows.map((r) => ({ id: r.id, title: r.title, status: r.status as Task["status"], due: r.due ?? undefined, notes: r.notes ?? undefined, createdAt: r.createdAt }))
+  }
+  async getById(id: string): Promise<Task | null> {
+    const row = await db.tasks.get(id)
+    if (!row) return null
+    return { id: row.id, title: row.title, status: row.status as Task["status"], due: row.due ?? undefined, notes: row.notes ?? undefined, createdAt: row.createdAt }
+  }
+  async save(task: Task): Promise<void> {
+    await db.tasks.put({ id: task.id, title: task.title, status: task.status, due: task.due ?? null, notes: task.notes ?? null, createdAt: task.createdAt })
+  }
+  async delete(id: string): Promise<void> {
+    await db.tasks.delete(id)
+  }
+}
+
+// ---------- finance ----------
+export class FinanceRepositoryImpl implements FinanceRepository {
+  async getAll(): Promise<FinanceEntry[]> {
+    const rows = await db.finances.toArray()
+    return rows.map((r) => ({ id: r.id, name: r.name, amount: r.amount, kind: r.kind as FinanceEntry["kind"], date: r.date, notes: r.notes ?? undefined }))
+  }
+  async save(entry: FinanceEntry): Promise<void> {
+    await db.finances.put({ id: entry.id, name: entry.name, amount: entry.amount, kind: entry.kind, date: entry.date, notes: entry.notes ?? null })
+  }
+  async delete(id: string): Promise<void> {
+    await db.finances.delete(id)
+  }
+}
+
+import type { FinanceRepository } from '../../contracts/repositories'
+import type { FinanceEntry } from '../../domain/finance'
+
+// ---------- investment ----------
+export class InvestmentRepositoryImpl implements InvestmentRepository {
+  async getAll(): Promise<Investment[]> {
+    const rows = await db.investments.toArray()
+    return rows.map((r) => ({ id: r.id, name: r.name, value: r.value, kind: r.kind, updatedAt: r.updatedAt }))
+  }
+  async save(entry: Investment): Promise<void> {
+    await db.investments.put({ id: entry.id, name: entry.name, value: entry.value, kind: entry.kind, updatedAt: entry.updatedAt })
+  }
+  async delete(id: string): Promise<void> {
+    await db.investments.delete(id)
+  }
+}
+
+import type { InvestmentRepository } from '../../contracts/repositories'
+import type { Investment } from '../../domain/investment'
+
+// ---------- wardrobe ----------
+export class WardrobeRepositoryImpl implements WardrobeRepository {
+  async getAll(): Promise<WardrobeItem[]> {
+    const rows = await db.wardrobe.toArray()
+    return rows.map((r) => ({ id: r.id, name: r.name, category: r.category, status: r.status, size: r.size ?? undefined, notes: r.notes ?? undefined }))
+  }
+  async save(item: WardrobeItem): Promise<void> {
+    await db.wardrobe.put({ id: item.id, name: item.name, category: item.category, status: item.status, size: item.size ?? null, notes: item.notes ?? null })
+  }
+  async delete(id: string): Promise<void> {
+    await db.wardrobe.delete(id)
+  }
+}
+
+import type { WardrobeRepository } from '../../contracts/repositories'
+import type { WardrobeItem } from '../../domain/wardrobe'
+
+// ---------- grooming ----------
+export class GroomingRepositoryImpl implements GroomingRepository {
+  async getAll(): Promise<GroomingRoutine[]> {
+    const rows = await db.grooming.toArray()
+    return rows.map((r) => ({ id: r.id, title: r.title, period: r.period as GroomingRoutine["period"], steps: r.steps }))
+  }
+  async save(routine: GroomingRoutine): Promise<void> {
+    await db.grooming.put({ id: routine.id, title: routine.title, period: routine.period, steps: routine.steps })
+  }
+  async delete(id: string): Promise<void> {
+    await db.grooming.delete(id)
+  }
+}
+
+import type { GroomingRepository } from '../../contracts/repositories'
+import type { GroomingRoutine } from '../../domain/grooming'
+
+// ---------- network ----------
+export class NetworkRepositoryImpl implements NetworkRepository {
+  async getAll(): Promise<NetworkContact[]> {
+    const rows = await db.network.toArray()
+    return rows.map((r) => ({ id: r.id, name: r.name, relation: r.relation ?? undefined, notes: r.notes ?? undefined }))
+  }
+  async save(contact: NetworkContact): Promise<void> {
+    await db.network.put({ id: contact.id, name: contact.name, relation: contact.relation ?? null, notes: contact.notes ?? null })
+  }
+  async delete(id: string): Promise<void> {
+    await db.network.delete(id)
+  }
+}
+
+// ---------- career ----------
+export class CareerRepositoryImpl implements CareerRepository {
+  async getAll(): Promise<CareerGoal[]> {
+    const rows = await db.career.toArray()
+    return rows.map((r) => ({ id: r.id, title: r.title, status: r.status, notes: r.notes ?? undefined }))
+  }
+  async save(goal: CareerGoal): Promise<void> {
+    await db.career.put({ id: goal.id, title: goal.title, status: goal.status, notes: goal.notes ?? null })
+  }
+  async delete(id: string): Promise<void> {
+    await db.career.delete(id)
+  }
+}
+
+import type { NetworkRepository } from '../../contracts/repositories'
+import type { NetworkContact } from '../../domain/network'
+import type { CareerRepository } from '../../contracts/repositories'
+import type { CareerGoal } from '../../domain/career'

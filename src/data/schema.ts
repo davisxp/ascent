@@ -22,6 +22,7 @@ export interface AscentDB extends Dexie {
   badges: Table<BadgeRow, string>
   badgeAwards: Table<BadgeAwardRow, string>
   gamification: Table<GamificationRow, string>
+  tasks: Table<TaskRow, string>
 }
 
 export interface ExerciseRow {
@@ -156,6 +157,76 @@ export interface BadgeAwardRow {
   earnedAt: string
 }
 
+export interface NetworkRow {
+  id: string
+  name: string
+  relation: string | null
+  notes: string | null
+}
+
+export interface MedicalRow {
+  id: string
+  title: string
+  body: string
+  date: string
+}
+
+export interface EstateRow {
+  id: string
+  name: string
+  value: number
+  notes: string | null
+}
+
+export interface CareerRow {
+  id: string
+  title: string
+  status: string
+  notes: string | null
+}
+
+export interface GroomingRow {
+  id: string
+  title: string
+  period: string
+  steps: string[]
+}
+
+export interface WardrobeRow {
+  id: string
+  name: string
+  category: string
+  status: string
+  size: string | null
+  notes: string | null
+}
+
+export interface InvestmentRow {
+  id: string
+  name: string
+  value: number
+  kind: string
+  updatedAt: string
+}
+
+export interface FinanceRow {
+  id: string
+  name: string
+  amount: number
+  kind: string
+  date: string
+  notes: string | null
+}
+
+export interface TaskRow {
+  id: string
+  title: string
+  status: string
+  due: string | null
+  notes: string | null
+  createdAt: string
+}
+
 export interface GamificationRow {
   id: string
   totalXP: number
@@ -179,7 +250,14 @@ export class AscentDatabase extends Dexie implements AscentDB {
   badges!: Table<BadgeRow, string>
   badgeAwards!: Table<BadgeAwardRow, string>
   gamification!: Table<GamificationRow, string>
-
+  tasks!: Table<TaskRow, string>
+  finances!: Table<FinanceRow, string>
+  investments!: Table<InvestmentRow, string>
+  wardrobe!: Table<WardrobeRow, string>
+  grooming!: Table<GroomingRow, string>
+  network!: Table<NetworkRow, string>
+  career!: Table<CareerRow, string>
+ 
   constructor() {
     super(DB_NAME)
     this.version(DB_VERSION).stores({
@@ -196,8 +274,16 @@ export class AscentDatabase extends Dexie implements AscentDB {
       badges: 'id',
       badgeAwards: 'badgeId',
       gamification: 'id',
-    })
+       tasks: 'id, status',
+       finances: 'id, kind',
+       investments: 'id, kind',
+       wardrobe: 'id, category',
+       grooming: 'id, period',
+       network: 'id',
+       career: 'id, status',
+     })
   }
 }
 
 export const db = new AscentDatabase()
+

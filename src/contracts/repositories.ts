@@ -19,6 +19,24 @@ import type { WeightEntry, MeasurementEntry, Photo, BodyProfile } from '../domai
 import type { Food, FoodLogEntry, DailyTotals } from '../domain/fuel'
 import type { Badge, BadgeAward, LevelInfo, Streak } from '../domain/gamification'
 import type { UserSettings } from '../domain/preferences'
+import type { Task } from '../domain/task'
+import type { TaskId } from '../domain/ids'
+import type { FinanceEntry } from '../domain/finance'
+import type { FinanceId } from '../domain/ids'
+import type { Investment } from '../domain/investment'
+import type { InvestmentId } from '../domain/ids'
+import type { WardrobeItem } from '../domain/wardrobe'
+import type { WardrobeId } from '../domain/ids'
+import type { GroomingRoutine } from '../domain/grooming'
+import type { GroomingId } from '../domain/ids'
+import type { NetworkContact } from '../domain/network'
+import type { NetworkId } from '../domain/ids'
+import type { CareerGoal } from '../domain/career'
+import type { CareerId } from '../domain/ids'
+import type { MedicalNote } from '../domain/medical'
+import type { MedicalId } from '../domain/ids'
+import type { EstateItem } from '../domain/estate'
+import type { EstateId } from '../domain/ids'
 
 export interface ExerciseRepository {
   getAll(): Promise<Exercise[]>
@@ -92,4 +110,59 @@ export interface PhotoRepository {
   get(id: PhotoId): Promise<Photo | null>
   save(photo: Photo): Promise<void>
   delete(id: PhotoId): Promise<void>
+}
+
+export interface TaskRepository {
+  getAll(): Promise<Task[]>
+  getById(id: TaskId): Promise<Task | null>
+  save(task: Task): Promise<void>
+  delete(id: TaskId): Promise<void>
+}
+
+export interface FinanceRepository {
+  getAll(): Promise<FinanceEntry[]>
+  save(entry: FinanceEntry): Promise<void>
+  delete(id: FinanceId): Promise<void>
+}
+
+export interface InvestmentRepository {
+  getAll(): Promise<Investment[]>
+  save(entry: Investment): Promise<void>
+  delete(id: InvestmentId): Promise<void>
+}
+
+export interface WardrobeRepository {
+  getAll(): Promise<WardrobeItem[]>
+  save(item: WardrobeItem): Promise<void>
+  delete(id: WardrobeId): Promise<void>
+}
+
+export interface GroomingRepository {
+  getAll(): Promise<GroomingRoutine[]>
+  save(routine: GroomingRoutine): Promise<void>
+  delete(id: GroomingId): Promise<void>
+}
+
+export interface NetworkRepository {
+  getAll(): Promise<NetworkContact[]>
+  save(contact: NetworkContact): Promise<void>
+  delete(id: NetworkId): Promise<void>
+}
+
+export interface CareerRepository {
+  getAll(): Promise<CareerGoal[]>
+  save(goal: CareerGoal): Promise<void>
+  delete(id: CareerId): Promise<void>
+}
+
+export interface MedicalRepository {
+  getAll(): Promise<MedicalNote[]>
+  save(note: MedicalNote): Promise<void>
+  delete(id: MedicalId): Promise<void>
+}
+
+export interface EstateRepository {
+  getAll(): Promise<EstateItem[]>
+  save(item: EstateItem): Promise<void>
+  delete(id: EstateId): Promise<void>
 }
