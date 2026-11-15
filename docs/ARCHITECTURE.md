@@ -10,7 +10,7 @@ src/
   content/       Typed seed data: exercises, chains, skill trees, foods, cues.
   ui/            Design tokens, primitives, shell components. No feature logic.
   app/           Shell, routes, central registries (routes, nav, zustand slices).
-  features/*     Vertical slices: train, skills, library, body, fuel, today, insights, history.
+  features/*     Vertical slices: today, train, skills, library, body, fuel, insights, history, curriculum, grooming, wardrobe, onboarding, settings.
 platform/        PWA, Electron, audio service, timer service, wakelock.
 tests/           Unit, property, e2e, a11y.
 scripts/         Content audit, demo seeder, reset.

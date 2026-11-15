@@ -29,7 +29,7 @@ Build a complete, working calisthenics app. **Every feature must actually work w
 - `src/content/` — typed seed data (exercises, chains, foods, cues)
 - `src/ui/` — design tokens + primitives (no feature logic)
 - `src/app/` — shell, routes, central registries
-- `src/features/*` — vertical slices (train, skills, library, body, fuel, today, insights, history)
+- `src/features/*` - vertical slices (today, train, skills, library, body, fuel, insights, history, curriculum, grooming, wardrobe, onboarding, settings)
 - `src/platform/` — PWA, Electron, audio, wakelock
 - `tests/` — unit, property, e2e, a11y
 
