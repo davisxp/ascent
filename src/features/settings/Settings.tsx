@@ -74,6 +74,17 @@ export const Settings = () => {
               </select>
             </label>
             <label className="text-sm">
+              <span className="block text-ink/60 mb-1">Theme</span>
+              <select
+                value={settings.theme}
+                onChange={(e) => save({ ...settings, theme: e.target.value as UserSettings['theme'] })}
+                className="w-full rounded-xl border border-ink/20 px-3 py-2"
+              >
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </label>
+            <label className="text-sm">
               <span className="block text-ink/60 mb-1">Units</span>
               <select
                 value={settings.units}
