@@ -82,11 +82,15 @@ Updated after every wave by the orchestrator from subagent reports.
     prTimeline, bestEffortCurve) and `features/history/calendar.ts` (monthGrid,
     monthTitle, shiftMonth); 12 new unit tests (86 total).
 
-## W5 critic + fixes
-- Not started
+## W5 critic + fixes (done)
+- docs/REVIEW.md written; targeted e2e specs added (fuel, export, workout, body, demo+offline); M7 perf mitigated (vendor chunks split).
 
-## W6 release
-- Not started
+## W6 release (done)
+- Gate green: typecheck + lint + 103 unit tests + axe on all 11 routes (chromium+mobile) + content audit (100 exercises, 89 foods) + production build (124.14 kB gz initial JS)
+- Windows exe built: release/ASCENT Setup 1.0.0.exe (electron-builder)
+- Screenshots captured: docs/screenshots/ — 19 routes × desktop + mobile (38 PNGs)
+- README.md updated for expanded scope
+- Tagged v1.0.0 at commit 66351a1
 
 ## Local dev (OpenBot agent)
 - Settings: export/import/reset/load-demo-data/copy-backup UI; sound/units/rest/theme/wakeLock/reducedMotion controls wired to settings repo.
