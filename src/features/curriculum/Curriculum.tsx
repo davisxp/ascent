@@ -1,25 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import data from '../../content/compendium.json'
+
 export function Curriculum() {
   const c = data as any
+  const stem = (c.curriculum?.stem?.parts ?? []).slice().sort((a: any, b: any) => String(a?.title ?? '').localeCompare(String(b?.title ?? '')))
+  const hum = (c.curriculum?.humanities?.parts ?? []).slice().sort((a: any, b: any) => String(a?.title ?? '').localeCompare(String(b?.title ?? '')))
+
   return (
-    <div className="p-6 pb-24 md:pb-6 space-y-4 text-ink">
-      <h1 className="font-display text-2xl font-bold">Curriculum</h1>
-      <h2 className="font-display text-lg font-bold">STEM</h2>
-      {(c.curriculum?.stem?.parts ?? []).slice().sort((a: any, b: any) => String(a?.title ?? '').localeCompare(String(b?.title ?? ''))).map((p: any, i: number) => (
-        <details key={i} className="mb-2 border border-ink/10 rounded-[14px] bg-white p-3">
-          <summary className="font-bold cursor-pointer">{p.title} ({p.items?.length ?? 0})</summary>
-          <ul className="mt-2 space-y-1 text-sm">{(p.items ?? []).slice().sort().map((it: string, j: number) => <li key={j}>{it}</li>)}</ul>
-        </details>
-      ))}
-      <h2 className="font-display text-lg font-bold">Humanities</h2>
-      {(c.curriculum?.humanities?.parts ?? []).slice().sort((a: any, b: any) => String(a?.title ?? '').localeCompare(String(b?.title ?? ''))).map((p: any, i: number) => (
-        <details key={i} className="mb-2 border border-ink/10 rounded-[14px] bg-white p-3">
-          <summary className="font-bold cursor-pointer">{p.title} ({p.items?.length ?? 0})</summary>
-          <ul className="mt-2 space-y-1 text-sm">{(p.items ?? []).slice().sort().map((it: string, j: number) => <li key={j}>{it}</li>)}</ul>
-        </details>
-      ))}
+    <div className="p-6 space-y-6 text-ink max-w-4xl mx-auto">
+      <header className="space-y-1">
+        <h1 className="font-display text-3xl">Curriculum</h1>
+        <p className="text-ink-soft text-sm">STEM and humanities, sorted.</p>
+      </header>
+
+      <section className="space-y-3">
+        <h2 className="font-display text-xl">STEM</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {stem.map((p: any, i: number) => (
+            <details key={i} className="bg-white border border-ink/10 rounded-2xl p-4 shadow-sm">
+              <summary className="font-medium cursor-pointer">{p.title} <span className="text-ink-soft text-sm">({p.items?.length ?? 0})</span></summary>
+              <ul className="text-sm space-y-1 mt-2 text-ink-soft">{(p.items ?? []).slice().sort().map((it: string, j: number) => <li key={j}>{it}</li>)}</ul>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="font-display text-xl">Humanities</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {hum.map((p: any, i: number) => (
+            <details key={i} className="bg-white border border-ink/10 rounded-2xl p-4 shadow-sm">
+              <summary className="font-medium cursor-pointer">{p.title} <span className="text-ink-soft text-sm">({p.items?.length ?? 0})</span></summary>
+              <ul className="text-sm space-y-1 mt-2 text-ink-soft">{(p.items ?? []).slice().sort().map((it: string, j: number) => <li key={j}>{it}</li>)}</ul>
+            </details>
+          ))}
+        </div>
+      </section>
     </div>
   )
 }
-

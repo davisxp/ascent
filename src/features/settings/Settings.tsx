@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-// Card removed — flat sections
+import { Button, Checkbox, Input } from '../../ui/primitives'
 import { SettingsRepositoryImpl } from '../../data/repositories'
 import { exportBackup, importBackup, resetAllData, seedDemoData } from '../../data/exportImport'
 import type { UserSettings } from '../../domain/index'
@@ -95,47 +95,36 @@ export const Settings = () => {
                 <option value="imperial">Imperial</option>
               </select>
             </label>
-            <label className="text-sm flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={settings.wakeLock}
-                onChange={(e) => save({ ...settings, wakeLock: e.target.checked })}
-              />
-              <span>Wake lock during workouts</span>
-            </label>
-            <label className="text-sm flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={settings.reducedMotion}
-                onChange={(e) => save({ ...settings, reducedMotion: e.target.checked })}
-              />
-              <span>Reduced motion</span>
-            </label>
+            <Checkbox
+              checked={settings.wakeLock}
+              onChange={(e) => save({ ...settings, wakeLock: e.target.checked })}
+              label="Wake lock during workouts"
+            />
+            <Checkbox
+              checked={settings.reducedMotion}
+              onChange={(e) => save({ ...settings, reducedMotion: e.target.checked })}
+              label="Reduced motion"
+            />
             <label className="text-sm">
               <span className="block text-ink/60 mb-1">Default rest (s)</span>
-              <input
+              <Input
                 type="number"
                 min={15}
                 max={300}
                 value={settings.defaultRestSeconds}
                 onChange={(e) => save({ ...settings, defaultRestSeconds: Number(e.target.value) })}
-                className="w-full rounded-xl border border-ink/20 px-3 py-2"
+                className="w-full h-11"
               />
             </label>
           </div>
         )}
 
         <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            disabled={busy}
-            onClick={onExport}
-            className="rounded-xl bg-pine text-white px-4 py-2 text-sm font-medium disabled:opacity-50"
-          >
+          <Button variant="primary" disabled={busy} onClick={onExport} className="h-11">
             Export backup
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="outline"
             disabled={busy}
             onClick={async () => {
               setBusy(true)
@@ -150,18 +139,13 @@ export const Settings = () => {
                 setBusy(false)
               }
             }}
-            className="rounded-xl border border-ink/20 px-4 py-2 text-sm font-medium disabled:opacity-50"
+            className="h-11"
           >
             Copy backup
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => fileRef.current?.click()}
-            className="rounded-xl border border-ink/20 px-4 py-2 text-sm font-medium disabled:opacity-50"
-          >
+          </Button>
+          <Button variant="outline" disabled={busy} onClick={() => fileRef.current?.click()} className="h-11">
             Import backup
-          </button>
+          </Button>
           <input
             ref={fileRef}
             type="file"
@@ -172,8 +156,8 @@ export const Settings = () => {
               if (f) onImportFile(f)
             }}
           />
-          <button
-            type="button"
+          <Button
+            variant="outline"
             disabled={busy}
             onClick={async () => {
               setBusy(true)
@@ -187,12 +171,12 @@ export const Settings = () => {
                 setBusy(false)
               }
             }}
-            className="rounded-xl border border-ink/20 px-4 py-2 text-sm font-medium disabled:opacity-50"
+            className="h-11"
           >
             Load demo data
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
             disabled={busy}
             onClick={async () => {
               if (!confirm('Reset ALL data? This cannot be undone.')) return
@@ -207,10 +191,10 @@ export const Settings = () => {
                 setBusy(false)
               }
             }}
-            className="rounded-xl border border-red-500/40 text-red-600 px-4 py-2 text-sm font-medium disabled:opacity-50"
+            className="h-11 text-clay"
           >
             Reset all data
-          </button>
+          </Button>
         </div>
         {status && <p className="text-sm text-ink/70">{status}</p>}
       </section>

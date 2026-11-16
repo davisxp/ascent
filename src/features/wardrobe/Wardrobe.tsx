@@ -2,7 +2,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from 'react'
 import { WardrobeRepositoryImpl } from '../../data/repositories'
-import { Button, Input } from '../../ui/primitives'
 import data from '../../content/compendium.json'
 
 const repo = new WardrobeRepositoryImpl()
@@ -22,39 +21,64 @@ export function Wardrobe() {
   const remove = async (id: string) => { await repo.delete(id); load() }
 
   return (
-    <div className="p-6 pb-24 md:pb-6 space-y-6 text-ink">
-      <h1 className="font-display text-2xl">Wardrobe</h1>
-      <p>{w.totals?.owned ?? 0} owned · {w.totals?.restoration ?? 0} restoration · {w.totals?.missing ?? 0} missing</p>
-      <WardrobeItems items={items} onAdd={add} onRemove={remove} />
-      {(w.categories ?? []).map((cat: any, i: number) => (
-        <details key={i} className="mb-2">
-          <summary>{cat.name} ({cat.items?.length ?? 0})</summary>
-          <ul>{(cat.items ?? []).map((it: any, j: number) => <li key={j}>{it.n} — {it.s}</li>)}</ul>
-        </details>
-      ))}
-      <p>Sizes: {(w.sizes ?? []).map((s: any) => `${s[0]}: ${s[1]}`).join(', ')}</p>
+    <div className="p-6 space-y-6 text-ink max-w-4xl mx-auto">
+      <header className="space-y-1">
+        <h1 className="font-display text-3xl">Wardrobe</h1>
+        <p className="text-ink-soft text-sm">
+          {w.totals?.owned ?? 0} owned · {w.totals?.restoration ?? 0} restoration · {w.totals?.missing ?? 0} missing
+        </p>
+      </header>
+
+      <section className="bg-white border border-ink/10 rounded-2xl p-5 space-y-3 shadow-sm">
+        <h2 className="font-display text-xl">Add garment</h2>
+        <WardrobeForm onAdd={add} />
+      </section>
+
+      <section className="bg-white border border-ink/10 rounded-2xl p-5 space-y-3 shadow-sm">
+        <h2 className="font-display text-xl">Your garments ({items.length})</h2>
+        {items.length === 0 ? (
+          <p className="text-ink-soft text-sm">No garments yet — add one above.</p>
+        ) : (
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {items.map((it: any) => (
+              <li key={it.id} className="flex items-center justify-between border border-ink/10 rounded-xl px-3 py-2">
+                <div>
+                  <p className="font-medium text-sm">{it.name}</p>
+                  <p className="text-xs text-ink-soft">{it.category} · {it.status}</p>
+                </div>
+                <button className="text-clay text-xs hover:underline" onClick={() => remove(it.id)}>Remove</button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="font-display text-xl">Reference categories</h2>
+        {(w.categories ?? []).map((cat: any, i: number) => (
+          <details key={i} className="bg-white border border-ink/10 rounded-2xl p-4 shadow-sm">
+            <summary className="font-medium cursor-pointer">{cat.name} <span className="text-ink-soft text-sm">({cat.items?.length ?? 0})</span></summary>
+            <ul className="text-sm space-y-1 mt-2">{(cat.items ?? []).map((it: any, j: number) => <li key={j} className="text-ink-soft">{it.n} — {it.s}</li>)}</ul>
+          </details>
+        ))}
+      </section>
+
+      <section className="bg-white border border-ink/10 rounded-2xl p-5 shadow-sm">
+        <h2 className="font-display text-xl">Sizes</h2>
+        <p className="text-sm text-ink-soft">{(w.sizes ?? []).map((s: any) => `${s[0]}: ${s[1]}`).join(' · ')}</p>
+      </section>
     </div>
   )
 }
 
-function WardrobeItems({ items, onAdd, onRemove }: { items: any[]; onAdd: (n: string, c: string) => void; onRemove: (id: string) => void }) {
+function WardrobeForm({ onAdd }: { onAdd: (n: string, c: string) => void }) {
   const [name, setName] = useState('')
   const [category, setCategory] = useState('')
   return (
-    <div className="bg-white border border-ink/10 rounded-xl p-4 space-y-2">
-      <div className="flex gap-2">
-        <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} />
-        <Button onClick={() => { onAdd(name, category); setName(''); setCategory('') }}>Add</Button>
-      </div>
-      <ul className="text-sm space-y-1">
-        {items.map((it: any) => (
-          <li key={it.id} className="flex justify-between">
-            <span>{it.name} — {it.category} ({it.status})</span>
-            <Button variant="ghost" className="text-clay" onClick={() => onRemove(it.id)}>Delete</Button>
-          </li>
-        ))}
-      </ul>
+    <div className="flex flex-wrap gap-2">
+      <input className="border border-ink/20 rounded-lg px-3 py-2 flex-1 min-w-[160px]" placeholder="Garment name" value={name} onChange={(e) => setName(e.target.value)} />
+      <input className="border border-ink/20 rounded-lg px-3 py-2 flex-1 min-w-[160px]" placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} />
+      <button className="px-4 py-2 bg-pine text-white rounded-lg hover:opacity-90" onClick={() => { onAdd(name, category); setName(''); setCategory('') }}>Add</button>
     </div>
   )
 }
