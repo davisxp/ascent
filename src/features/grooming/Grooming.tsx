@@ -20,7 +20,12 @@ export function Grooming() {
     <div className="p-6 pb-24 md:pb-6 space-y-4 text-ink">
       <h1 className="font-display text-2xl">Grooming</h1>
       <GroomingRoutines routines={routines} onAdd={add} onRemove={remove} />
-      <p>Skin: {c.grooming?.skin?.Classification} · {c.grooming?.skin?.['Fitzpatrick Type']}</p>
+      {c.grooming?.skin?.Classification && (
+        <p className="text-sm text-ink/60">
+          Skin: {c.grooming.skin.Classification}
+          {c.grooming.skin['Fitzpatrick Type'] ? ` · ${c.grooming.skin['Fitzpatrick Type']}` : ''}
+        </p>
+      )}
     </div>
   )
 }
@@ -32,7 +37,7 @@ function GroomingRoutines({ routines, onAdd, onRemove }: { routines: any[]; onAd
     <div className="bg-white border border-ink/10 rounded-xl p-4 space-y-2">
       <div className="flex gap-2">
         <Input placeholder="Routine" value={title} onChange={(e) => setTitle(e.target.value)} />
-        <select className="border rounded px-2 py-1" value={period} onChange={(e) => setPeriod(e.target.value as any)}>
+        <select className="border rounded px-2 py-1" value={period} onChange={(e) => setPeriod(e.target.value as 'am' | 'pm')}>
           <option value="am">AM</option>
           <option value="pm">PM</option>
         </select>

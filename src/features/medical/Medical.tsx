@@ -3,12 +3,10 @@
 import { useEffect, useState } from 'react'
 import { MedicalRepositoryImpl } from '../../data/repositories'
 import { Button, Input } from '../../ui/primitives'
-import data from '../../content/compendium.json'
 
 const repo = new MedicalRepositoryImpl()
 
 export function Medical() {
-  const c = data as any
   const [notes, setNotes] = useState<any[]>([])
   const load = async () => setNotes(await repo.getAll())
   useEffect(() => { load() }, [])
@@ -20,7 +18,6 @@ export function Medical() {
     <div className="p-6 pb-24 md:pb-6 space-y-4 text-ink">
       <h1 className="font-display text-2xl">Medical</h1>
       <MedicalNotes notes={notes} onAdd={add} onRemove={remove} />
-      <pre className="text-xs whitespace-pre-wrap bg-white border rounded p-4">{JSON.stringify(c.medical ?? {}, null, 2).slice(0, 2000)}</pre>
     </div>
   )
 }

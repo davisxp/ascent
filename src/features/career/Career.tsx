@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from 'react'
 import { CareerRepositoryImpl } from '../../data/repositories'
+import { Button, Input } from '../../ui/primitives'
 import data from '../../content/compendium.json'
 
 const repo = new CareerRepositoryImpl()
@@ -32,7 +33,6 @@ export function Career() {
         {panels.filter((p) => p !== 'Goals').map((p, i) => (
           <div key={i} className="bg-white border border-ink/10 rounded-2xl p-4 shadow-sm">
             <h3 className="font-display text-lg">{p}</h3>
-            <p className="text-sm text-ink-soft">Track your {p.toLowerCase()} here.</p>
           </div>
         ))}
       </section>
@@ -45,11 +45,11 @@ function CareerGoals({ goals, onAdd, onRemove }: { goals: any[]; onAdd: (t: stri
   return (
     <div className="space-y-2">
       <div className="flex gap-2">
-        <input className="border border-ink/20 rounded-lg px-3 py-2 flex-1" placeholder="New goal" value={title} onChange={(e) => setTitle(e.target.value)} />
-        <button className="px-4 py-2 bg-pine text-white rounded-lg" onClick={() => { onAdd(title); setTitle('') }}>Add</button>
+        <Input className="flex-1 h-11" placeholder="New goal" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <Button onClick={() => { onAdd(title); setTitle('') }} className="h-11">Add</Button>
       </div>
       <ul className="text-sm space-y-1">
-        {goals.map((g: any) => <li key={g.id} className="flex justify-between border border-ink/10 rounded-lg px-3 py-2"><span>{g.title} — {g.status}</span><button className="text-clay" onClick={() => onRemove(g.id)}>Delete</button></li>)}
+        {goals.map((g: any) => <li key={g.id} className="flex justify-between border border-ink/10 rounded-lg px-3 py-2"><span>{g.title} — {g.status}</span><Button variant="ghost" className="text-clay" onClick={() => onRemove(g.id)}>Delete</Button></li>)}
       </ul>
     </div>
   )

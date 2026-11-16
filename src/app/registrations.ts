@@ -47,11 +47,5 @@ for (const r of routes) {
   navRegistry.register({ id: r.path, label: r.label, href: r.path, icon: r.icon, mobileOnly: false, desktopOnly: false })
 }
 
-// Mobile bottom tabs: Today, Train, Skills, Body, More (Settings as More)
-// Mark the extra ones as desktop-only for mobile to keep 4 tabs? Simpler: mark Progress/History as desktopOnly on mobile.
-for (const item of navRegistry.items) {
-  if (['/progress', '/history', '/library', '/fuel'].includes(item.href)) {
-    item.mobileOnly = false
-    item.desktopOnly = true
-  }
-}
+// No dead nav entries: every route in `routes` above is registered,
+// so there are no /progress,/history,/library,/fuel items to filter.
